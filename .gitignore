@@ -1,0 +1,16 @@
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+/ports/
+/vendor/
+.*.installed
+/Gemfile.lock
+/ext/cmetrics/libcmetrics.a
+/lib/cmetrics/cmetrics.bundle
+/ext/cmetrics/cmetrics/
+/ext/cmetrics/monkey/
