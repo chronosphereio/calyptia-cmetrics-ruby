@@ -11,10 +11,10 @@ class CMetricsCounterTest < Test::Unit::TestCase
 
     def test_counter
       assert_equal 0.0, @counter.val
-      @counter.inc
+      assert_true @counter.inc
       assert_equal 1.0, @counter.val
 
-      @counter.add 2.0
+      assert_true @counter.add 2.0
       assert_equal 3.0, @counter.val
       puts @counter.to_prometheus
     end
