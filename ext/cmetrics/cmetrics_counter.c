@@ -117,6 +117,16 @@ rb_cmetrics_counter_create(int argc, VALUE* argv, VALUE self)
                                                           StringValuePtr(rb_help),
                                                           labels_count, labels);
             break;
+        case T_SYMBOL:
+            labels = (char *[]) { RSTRING_PTR(rb_sym2str(rb_labels)) };
+            labels_count = 1;
+            cmetricsCounter->counter = cmt_counter_create(cmetricsCounter->instance,
+                                                          StringValuePtr(rb_namespace),
+                                                          StringValuePtr(rb_subsystem),
+                                                          StringValuePtr(rb_name),
+                                                          StringValuePtr(rb_help),
+                                                          labels_count, labels);
+            break;
         case T_ARRAY:
             labels_count = (int)RARRAY_LEN(rb_labels);
             labels = ALLOCV_N(char *, tmp_label, labels_count);
@@ -134,7 +144,7 @@ rb_cmetrics_counter_create(int argc, VALUE* argv, VALUE self)
             ALLOCV_END(tmp_label);
             break;
         default:
-            ;;
+            rb_raise(rb_eArgError, "labels should be String, Symbol or Array class instance.");
         }
     } else {
         cmetricsCounter->counter = cmt_counter_create(cmetricsCounter->instance,
@@ -185,6 +195,13 @@ rb_cmetrics_counter_increment(int argc, VALUE* argv, VALUE self)
             ret = cmt_counter_inc(cmetricsCounter->counter, ts,
                                   labels_count, labels);
             break;
+        case T_SYMBOL:
+            labels = (char *[]) { RSTRING_PTR(rb_sym2str(rb_labels)) };
+            labels_count = 1;
+
+            ret = cmt_counter_inc(cmetricsCounter->counter, ts,
+                                  labels_count, labels);
+            break;
         case T_ARRAY:
             labels_count = (int)RARRAY_LEN(rb_labels);
             labels = ALLOCV_N(char *, tmp_label, labels_count);
@@ -199,7 +216,7 @@ rb_cmetrics_counter_increment(int argc, VALUE* argv, VALUE self)
 
             break;
         default:
-            ;;
+            rb_raise(rb_eArgError, "labels should be String, Symbol or Array class instance.");
         }
     } else {
         ret = cmt_counter_inc(cmetricsCounter->counter, ts,
@@ -243,6 +260,13 @@ rb_cmetrics_counter_get_value(int argc, VALUE* argv, VALUE self)
             ret = cmt_counter_get_val(cmetricsCounter->counter,
                                       labels_count, labels, &value);
             break;
+        case T_SYMBOL:
+            labels = (char *[]) { RSTRING_PTR(rb_sym2str(rb_labels)) };
+            labels_count = 1;
+
+            ret = cmt_counter_get_val(cmetricsCounter->counter,
+                                      labels_count, labels, &value);
+            break;
         case T_ARRAY:
             labels_count = (int)RARRAY_LEN(rb_labels);
             labels = ALLOCV_N(char *, tmp_label, labels_count);
@@ -258,7 +282,7 @@ rb_cmetrics_counter_get_value(int argc, VALUE* argv, VALUE self)
 
             break;
         default:
-            ;;
+            rb_raise(rb_eArgError, "labels should be String, Symbol or Array class instance.");
         }
     } else {
         ret = cmt_counter_get_val(cmetricsCounter->counter,
@@ -321,6 +345,12 @@ rb_cmetrics_counter_add(int argc, VALUE* argv, VALUE self)
             ret = cmt_counter_add(cmetricsCounter->counter, ts, value,
                                   labels_count, labels);
             break;
+        case T_SYMBOL:
+            labels = (char *[]) { RSTRING_PTR(rb_sym2str(rb_labels)) };
+            labels_count = 1;
+            ret = cmt_counter_add(cmetricsCounter->counter, ts, value,
+                                  labels_count, labels);
+            break;
         case T_ARRAY:
             labels_count = (int)RARRAY_LEN(rb_labels);
             labels = ALLOCV_N(char *, tmp_label, labels_count);
@@ -335,7 +365,7 @@ rb_cmetrics_counter_add(int argc, VALUE* argv, VALUE self)
 
             break;
         default:
-            ;;
+            rb_raise(rb_eArgError, "labels should be String, Symbol or Array class instance.");
         }
     } else {
         ret = cmt_counter_add(cmetricsCounter->counter, ts, value,
@@ -397,6 +427,12 @@ rb_cmetrics_counter_set(int argc, VALUE* argv, VALUE self)
             ret = cmt_counter_set(cmetricsCounter->counter, ts, value,
                                   labels_count, labels);
             break;
+        case T_SYMBOL:
+            labels = (char *[]) { RSTRING_PTR(rb_sym2str(rb_labels)) };
+            labels_count = 1;
+            ret = cmt_counter_set(cmetricsCounter->counter, ts, value,
+                                  labels_count, labels);
+            break;
         case T_ARRAY:
             labels_count = (int)RARRAY_LEN(rb_labels);
             labels = ALLOCV_N(char *, tmp_label, labels_count);
@@ -412,7 +448,7 @@ rb_cmetrics_counter_set(int argc, VALUE* argv, VALUE self)
 
             break;
         default:
-            ;;
+            rb_raise(rb_eArgError, "labels should be String, Symbol or Array class instance.");
         }
     } else {
         ret = cmt_counter_set(cmetricsCounter->counter, ts, value,
