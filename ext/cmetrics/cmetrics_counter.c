@@ -132,7 +132,16 @@ rb_cmetrics_counter_create(int argc, VALUE* argv, VALUE self)
             labels = ALLOCV_N(char *, tmp_label, labels_count);
             for (i = 0; i < labels_count; i++) {
                 VALUE item = RARRAY_AREF(rb_labels, i);
-                labels[i] = StringValuePtr(item);
+                switch(TYPE(item)) {
+                case T_SYMBOL:
+                    labels[i] = RSTRING_PTR(rb_sym2str(item));
+                    break;
+                case T_STRING:
+                    labels[i] = StringValuePtr(item);
+                    break;
+                default:
+                    rb_raise(rb_eArgError, "labels must be Symbol/String");
+                }
             }
             cmetricsCounter->counter = cmt_counter_create(cmetricsCounter->instance,
                                                           StringValuePtr(rb_namespace),
@@ -207,7 +216,16 @@ rb_cmetrics_counter_increment(int argc, VALUE* argv, VALUE self)
             labels = ALLOCV_N(char *, tmp_label, labels_count);
             for (i = 0; i < labels_count; i++) {
                 VALUE item = RARRAY_AREF(rb_labels, i);
-                labels[i] = StringValuePtr(item);
+                switch(TYPE(item)) {
+                case T_SYMBOL:
+                    labels[i] = RSTRING_PTR(rb_sym2str(item));
+                    break;
+                case T_STRING:
+                    labels[i] = StringValuePtr(item);
+                    break;
+                default:
+                    rb_raise(rb_eArgError, "labels must be Symbol/String");
+                }
             }
             ret = cmt_counter_inc(cmetricsCounter->counter, ts,
                                   labels_count, labels);
@@ -272,7 +290,16 @@ rb_cmetrics_counter_get_value(int argc, VALUE* argv, VALUE self)
             labels = ALLOCV_N(char *, tmp_label, labels_count);
             for (i = 0; i < labels_count; i++) {
                 VALUE item = RARRAY_AREF(rb_labels, i);
-                labels[i] = StringValuePtr(item);
+                switch(TYPE(item)) {
+                case T_SYMBOL:
+                    labels[i] = RSTRING_PTR(rb_sym2str(item));
+                    break;
+                case T_STRING:
+                    labels[i] = StringValuePtr(item);
+                    break;
+                default:
+                    rb_raise(rb_eArgError, "labels must be Symbol/String");
+                }
             }
 
             ret = cmt_counter_get_val(cmetricsCounter->counter,
@@ -356,7 +383,16 @@ rb_cmetrics_counter_add(int argc, VALUE* argv, VALUE self)
             labels = ALLOCV_N(char *, tmp_label, labels_count);
             for (i = 0; i < labels_count; i++) {
                 VALUE item = RARRAY_AREF(rb_labels, i);
-                labels[i] = StringValuePtr(item);
+                switch(TYPE(item)) {
+                case T_SYMBOL:
+                    labels[i] = RSTRING_PTR(rb_sym2str(item));
+                    break;
+                case T_STRING:
+                    labels[i] = StringValuePtr(item);
+                    break;
+                default:
+                    rb_raise(rb_eArgError, "labels must be Symbol/String");
+                }
             }
             ret = cmt_counter_add(cmetricsCounter->counter, ts, value,
                                   labels_count, labels);
@@ -438,7 +474,16 @@ rb_cmetrics_counter_set(int argc, VALUE* argv, VALUE self)
             labels = ALLOCV_N(char *, tmp_label, labels_count);
             for (i = 0; i < labels_count; i++) {
                 VALUE item = RARRAY_AREF(rb_labels, i);
-                labels[i] = StringValuePtr(item);
+                switch(TYPE(item)) {
+                case T_SYMBOL:
+                    labels[i] = RSTRING_PTR(rb_sym2str(item));
+                    break;
+                case T_STRING:
+                    labels[i] = StringValuePtr(item);
+                    break;
+                default:
+                    rb_raise(rb_eArgError, "labels must be Symbol/String");
+                }
             }
 
             ret = cmt_counter_set(cmetricsCounter->counter, ts, value,
