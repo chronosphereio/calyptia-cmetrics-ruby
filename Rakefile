@@ -30,8 +30,8 @@ class BuildCMetrics
     @recipe = MiniPortileCMake.new("cmetrics", @version)
     @checkpoint = ".#{@recipe.name}-#{@recipe.version}.installed"
     @recipe.files << {
-      url: "file://#{File.dirname(__FILE__)}/ext/#{@recipe.name}-#{@recipe.version}.zip",
-      sha256sum: "1c8703a926fb93dc90abb63da8f1e3caaa0a2243892434c7ec5c6fba27e53d8f",
+      url: "file://#{File.dirname(__FILE__)}/ext/#{@recipe.name}-#{@recipe.version}.tar.gz",
+      sha256sum: "fd5d8f38a8f41778c91a2ce677ee95417b40ed05dd4e183dfb9fbf3fa6a4a424",
     }
   end
 
