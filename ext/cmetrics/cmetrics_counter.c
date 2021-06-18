@@ -541,5 +541,7 @@ void Init_cmetrics_counter(VALUE rb_mCMetrics)
     rb_define_method(rb_cCounter, "val", rb_cmetrics_counter_get_value, -1);
     rb_define_method(rb_cCounter, "add", rb_cmetrics_counter_add, -1);
     rb_define_method(rb_cCounter, "set", rb_cmetrics_counter_set, -1);
+    rb_define_method(rb_cCounter, "val=", rb_cmetrics_counter_set, -1);
+    rb_define_method(rb_cCounter, "value=", rb_cmetrics_counter_set, -1);
     rb_define_method(rb_cCounter, "to_prometheus", rb_cmetrics_counter_to_prometheus, 0);
 }
