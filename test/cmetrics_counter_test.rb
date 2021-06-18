@@ -31,4 +31,28 @@ class CMetricsCounterTest < Test::Unit::TestCase
       puts @counter.to_prometheus
     end
   end
+
+  sub_test_case "not enough initialized" do
+    setup do
+      @counter = CMetrics::Counter.new
+    end
+
+    def test_error
+      assert_raise(RuntimeError) do
+        @counter.inc
+      end
+
+      assert_raise(RuntimeError) do
+        @counter.add 2.0
+      end
+
+      assert_raise(RuntimeError) do
+        @counter.set 2.0
+      end
+
+      assert_raise(RuntimeError) do
+        @counter.val
+      end
+    end
+  end
 end

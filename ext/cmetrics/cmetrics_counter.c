@@ -76,6 +76,7 @@ rb_cmetrics_counter_initialize(VALUE self)
             self, struct CMetricsCounter, &rb_cmetrics_counter_type, cmetricsCounter);
 
     cmetricsCounter->instance = cmt_create();
+    cmetricsCounter->counter = NULL;
 
     return Qnil;
 }
@@ -168,6 +169,10 @@ rb_cmetrics_counter_increment(int argc, VALUE* argv, VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsCounter, &rb_cmetrics_counter_type, cmetricsCounter);
 
+    if (!cmetricsCounter->counter) {
+        rb_raise(rb_eRuntimeError, "Create counter with CMetrics::Counter#create first.");
+    }
+
     rb_scan_args(argc, argv, "01", &rb_labels);
 
     ts = cmt_time_now();
@@ -222,6 +227,10 @@ rb_cmetrics_counter_get_value(int argc, VALUE* argv, VALUE self)
 
     TypedData_Get_Struct(
             self, struct CMetricsCounter, &rb_cmetrics_counter_type, cmetricsCounter);
+
+    if (!cmetricsCounter->counter) {
+        rb_raise(rb_eRuntimeError, "Create counter with CMetrics::Counter#create first.");
+    }
 
     rb_scan_args(argc, argv, "01", &rb_labels);
 
@@ -284,6 +293,10 @@ rb_cmetrics_counter_add(int argc, VALUE* argv, VALUE self)
 
     TypedData_Get_Struct(
             self, struct CMetricsCounter, &rb_cmetrics_counter_type, cmetricsCounter);
+
+    if (!cmetricsCounter->counter) {
+        rb_raise(rb_eRuntimeError, "Create counter with CMetrics::Counter#create first.");
+    }
 
     rb_scan_args(argc, argv, "11", &rb_num, &rb_labels);
 
@@ -357,6 +370,10 @@ rb_cmetrics_counter_set(int argc, VALUE* argv, VALUE self)
 
     TypedData_Get_Struct(
             self, struct CMetricsCounter, &rb_cmetrics_counter_type, cmetricsCounter);
+
+    if (!cmetricsCounter->counter) {
+        rb_raise(rb_eRuntimeError, "Create counter with CMetrics::Counter#create first.");
+    }
 
     rb_scan_args(argc, argv, "11", &rb_num, &rb_labels);
 
