@@ -26,4 +26,5 @@ void Init_cmetrics(void)
     rb_mCMetrics = rb_define_module("CMetrics");
 
     Init_cmetrics_counter(rb_mCMetrics);
+    Init_cmetrics_gauge(rb_mCMetrics);
 }
