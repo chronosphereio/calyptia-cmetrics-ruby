@@ -27,6 +27,7 @@
 #include <cmetrics/cmt_counter.h>
 #include <cmetrics/cmt_gauge.h>
 #include <cmetrics/cmt_encode_prometheus.h>
+#include <cmetrics/cmt_encode_msgpack.h>
 
 struct CMetricsCounter {
     struct cmt *instance;

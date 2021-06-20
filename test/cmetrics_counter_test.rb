@@ -87,6 +87,7 @@ class CMetricsCounterTest < Test::Unit::TestCase
       assert_true @counter.set(12.15, [:localhost, :test])
       assert_false @counter.set(1, [:localhost, :test])
       puts @counter.to_prometheus
+      assert_not_nil @counter.to_msgpack
     end
   end
 
