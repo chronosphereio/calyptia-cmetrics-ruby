@@ -37,6 +37,7 @@ class CMetricsGaugeTest < Test::Unit::TestCase
       assert_equal 7.5, @gauge.val(["localhost", "test"])
 
       puts @gauge.to_prometheus
+      assert_not_nil @gauge.to_msgpack
     end
   end
 
