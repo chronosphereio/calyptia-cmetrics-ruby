@@ -1,0 +1,24 @@
+From 722defa7455527b25e79a002d84cdb7e009ce6a1 Mon Sep 17 00:00:00 2001
+From: Hiroshi Hatake <hatake@calyptia.com>
+Date: Fri, 18 Jun 2021 19:38:45 +0900
+Subject: [PATCH] Specify position indepentent code flag
+
+Signed-off-by: Hiroshi Hatake <hatake@calyptia.com>
+---
+ CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8f19a21..a0f566d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,5 +1,6 @@
+ cmake_minimum_required(VERSION 2.8)
+ project(cmetrics C)
++set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ 
+ # CMetrics Version
+ set(CMT_VERSION_MAJOR  0)
+-- 
+2.17.1
+
