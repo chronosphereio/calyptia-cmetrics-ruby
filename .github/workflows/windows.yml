@@ -1,0 +1,18 @@
+name: CI on Windows
+
+on: [push,pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.0.1
+    - name: Run the default task
+      run: |
+        gem install bundler -v 2.2.15
+        ridk exec bundle install
+        ridk exec bundle exec rake
