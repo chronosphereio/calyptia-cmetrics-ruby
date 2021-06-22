@@ -1,10 +1,10 @@
-name: CI on Ubuntu
+name: CI on Windows
 
 on: [push,pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
@@ -14,5 +14,5 @@ jobs:
     - name: Run the default task
       run: |
         gem install bundler -v 2.2.15
-        bundle install
-        bundle exec rake
+        ridk exec bundle install
+        ridk exec bundle exec rake
