@@ -17,6 +17,14 @@ task test: [:"build:cmetrics", :compile]
 
 require 'rake/extensiontask'
 
+def linux?
+  RUBY_PLATFORM =~ /linux/
+end
+
+def windows?
+  RUBY_PLATFORM =~ /mingw|mswin/
+end
+
 class BuildCMetrics
   require "mini_portile2"
   require "fileutils"
@@ -33,6 +41,9 @@ class BuildCMetrics
       url: "file://#{File.dirname(__FILE__)}/ext/#{@recipe.name}-#{@recipe.version}.tar.gz",
       sha256sum: "fd5d8f38a8f41778c91a2ce677ee95417b40ed05dd4e183dfb9fbf3fa6a4a424",
     }
+    if linux?
+      @recipe.patch_files << "#{File.dirname(__FILE__)}/ext/patches/0001-Specify-position-indepentent-code-flag.patch"
+    end
   end
 
   def build
