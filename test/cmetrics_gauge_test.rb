@@ -9,7 +9,7 @@ class CMetricsGaugeTest < Test::Unit::TestCase
       @gauge.create("kubernetes", "network", "load", "Network load", ["hostname", "app"])
     end
 
-    def test_counter
+    def test_gauge
       assert_equal 0.0, @gauge.val
       assert_true @gauge.set 2.0
 
@@ -76,7 +76,7 @@ class CMetricsGaugeTest < Test::Unit::TestCase
       @gauge.create("kubernetes", "network", "load", "Network load", [:hostname, :app])
     end
 
-    def test_counter
+    def test_gauge
       assert_equal 0.0, @gauge.val
       assert_true @gauge.set 2.0
 
