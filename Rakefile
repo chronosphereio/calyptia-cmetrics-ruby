@@ -79,9 +79,9 @@ namespace :build do
 end
 
 task :clean do
-  FileUtils.rm_f File.join(File.dirname(__FILE__), "ext", "cmetrics", "libcmetrics.a")
-  FileUtils.rm_f File.join(File.dirname(__FILE__), "ext", "cmetrics", "cmetrics")
-  FileUtils.rm_f File.join(File.dirname(__FILE__), "ext", "cmetrics", "monkey")
+  FileUtils.rm_f File.join(File.dirname(__FILE__), "ext", "cmetrics", "lib*.a")
+  FileUtils.rm_rf File.join(File.dirname(__FILE__), "ext", "cmetrics", "cmetrics")
+  FileUtils.rm_rf File.join(File.dirname(__FILE__), "ext", "cmetrics", "monkey")
   FileUtils.rm_f File.join(File.dirname(__FILE__), Dir.glob(".*.installed"))
   FileUtils.rm_rf File.join(File.dirname(__FILE__), "ports")
   FileUtils.rm_rf File.join(File.dirname(__FILE__), "tmp")
