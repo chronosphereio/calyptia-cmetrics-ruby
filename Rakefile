@@ -48,6 +48,8 @@ class BuildCMetrics
       @recipe.cook
       libcmetrics_path = File.join(File.dirname(__FILE__), "ports/#{@recipe.host}/cmetrics/#{@version}/lib/libcmetrics.a")
       FileUtils.cp(libcmetrics_path, File.join(File.dirname(__FILE__), "ext", "cmetrics", "libcmetrics.a"))
+      libmpack_path = File.join(File.dirname(__FILE__), "ports/#{@recipe.host}/cmetrics/#{@version}/lib/libmpack.a")
+      FileUtils.cp(libmpack_path, File.join(File.dirname(__FILE__), "ext", "cmetrics", "libmpack.a"))
       include_path = File.join(File.dirname(__FILE__), "ports/#{@recipe.host}/cmetrics/#{@version}/include/")
       FileUtils.cp_r(Dir.glob(File.join(include_path, "*")), File.join(File.dirname(__FILE__), "ext", "cmetrics"))
       FileUtils.touch(@checkpoint)
