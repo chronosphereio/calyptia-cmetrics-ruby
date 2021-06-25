@@ -10,7 +10,8 @@
 /vendor/
 .*.installed
 /Gemfile.lock
-/ext/cmetrics/libcmetrics.a
+/ext/cmetrics/*.a
+/lib/cmetrics/cmetrics.so
 /lib/cmetrics/cmetrics.bundle
 /ext/cmetrics/cmetrics/
 /ext/cmetrics/monkey/
