@@ -39,11 +39,8 @@ class BuildCMetrics
     @checkpoint = ".#{@recipe.name}-#{@recipe.version}.installed"
     @recipe.files << {
       url: "file://#{File.dirname(__FILE__)}/ext/#{@recipe.name}-#{@recipe.version}.tar.gz",
-      sha256sum: "fd5d8f38a8f41778c91a2ce677ee95417b40ed05dd4e183dfb9fbf3fa6a4a424",
+      sha256sum: "fafb2d37dcb8698d7b931dbb03e08373b94ed5197a231de213eab0b175f5b61f",
     }
-    if linux?
-      @recipe.patch_files << "#{File.dirname(__FILE__)}/ext/patches/0001-Specify-position-indepentent-code-flag.patch"
-    end
   end
 
   def build
