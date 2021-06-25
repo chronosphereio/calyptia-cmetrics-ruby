@@ -538,7 +538,7 @@ rb_cmetrics_counter_to_msgpack(VALUE self)
             self, struct CMetricsCounter, &rb_cmetrics_counter_type, cmetricsCounter);
 
 
-    ret = cmt_encode_msgpack_to_msgpack(cmetricsCounter->instance, &buffer, &buffer_size);
+    ret = cmt_encode_msgpack(cmetricsCounter->instance, &buffer, &buffer_size);
 
     if (ret == 0) {
         return rb_str_new(buffer, buffer_size);
