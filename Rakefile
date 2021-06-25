@@ -46,9 +46,9 @@ class BuildCMetrics
   def build
     unless File.exist?(@checkpoint)
       @recipe.cook
-      lib_path = File.join(File.dirname(__FILE__), "ports/#{@recipe.host}/cmetrics/#{@version}/lib/libcmetrics.a")
+      libcmetrics_path = File.join(File.dirname(__FILE__), "ports/#{@recipe.host}/cmetrics/#{@version}/lib/libcmetrics.a")
+      FileUtils.cp(libcmetrics_path, File.join(File.dirname(__FILE__), "ext", "cmetrics", "libcmetrics.a"))
       include_path = File.join(File.dirname(__FILE__), "ports/#{@recipe.host}/cmetrics/#{@version}/include/")
-      FileUtils.cp(lib_path, File.join(File.dirname(__FILE__), "ext", "cmetrics", "libcmetrics.a"))
       FileUtils.cp_r(Dir.glob(File.join(include_path, "*")), File.join(File.dirname(__FILE__), "ext", "cmetrics"))
       FileUtils.touch(@checkpoint)
     end
