@@ -719,6 +719,28 @@ rb_cmetrics_gauge_to_msgpack(VALUE self)
     }
 }
 
+static VALUE
+rb_cmetrics_gauge_to_text(VALUE self)
+{
+    struct CMetricsGauge* cmetricsGauge;
+    cmt_sds_t  buffer;
+    VALUE text;
+
+    TypedData_Get_Struct(
+            self, struct CMetricsGauge, &rb_cmetrics_gauge_type, cmetricsGauge);
+
+    buffer = cmt_encode_text_create(cmetricsGauge->instance);
+    if (buffer == NULL) {
+        return Qnil;
+    }
+
+    text = rb_str_new2(buffer);
+
+    cmt_sds_destroy(buffer);
+
+    return text;
+}
+
 void Init_cmetrics_gauge(VALUE rb_mCMetrics)
 {
     rb_cGauge = rb_define_class_under(rb_mCMetrics, "Gauge", rb_cObject);
@@ -741,4 +763,5 @@ void Init_cmetrics_gauge(VALUE rb_mCMetrics)
     rb_define_method(rb_cGauge, "value=", rb_cmetrics_gauge_set, -1);
     rb_define_method(rb_cGauge, "to_prometheus", rb_cmetrics_gauge_to_prometheus, 0);
     rb_define_method(rb_cGauge, "to_msgpack", rb_cmetrics_gauge_to_msgpack, 0);
+    rb_define_method(rb_cGauge, "to_s", rb_cmetrics_gauge_to_text, 0);
 }

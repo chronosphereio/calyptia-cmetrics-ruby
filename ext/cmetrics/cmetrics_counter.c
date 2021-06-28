@@ -546,6 +546,28 @@ rb_cmetrics_counter_to_msgpack(VALUE self)
     }
 }
 
+static VALUE
+rb_cmetrics_counter_to_text(VALUE self)
+{
+    struct CMetricsCounter* cmetricsCounter;
+    cmt_sds_t buffer;
+    VALUE text;
+
+    TypedData_Get_Struct(
+            self, struct CMetricsCounter, &rb_cmetrics_counter_type, cmetricsCounter);
+
+    buffer = cmt_encode_text_create(cmetricsCounter->instance);
+    if (buffer == NULL) {
+        return Qnil;
+    }
+
+    text = rb_str_new2(buffer);
+
+    cmt_sds_destroy(buffer);
+
+    return text;
+}
+
 void Init_cmetrics_counter(VALUE rb_mCMetrics)
 {
     rb_cCounter = rb_define_class_under(rb_mCMetrics, "Counter", rb_cObject);
@@ -565,4 +587,5 @@ void Init_cmetrics_counter(VALUE rb_mCMetrics)
     rb_define_method(rb_cCounter, "value=", rb_cmetrics_counter_set, -1);
     rb_define_method(rb_cCounter, "to_prometheus", rb_cmetrics_counter_to_prometheus, 0);
     rb_define_method(rb_cCounter, "to_msgpack", rb_cmetrics_counter_to_msgpack, 0);
+    rb_define_method(rb_cCounter, "to_s", rb_cmetrics_counter_to_text, 0);
 }
