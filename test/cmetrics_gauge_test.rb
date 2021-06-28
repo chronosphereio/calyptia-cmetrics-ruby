@@ -10,7 +10,7 @@ class CMetricsGaugeTest < Test::Unit::TestCase
     end
 
     def test_gauge
-      assert_equal 0.0, @gauge.val
+      assert_equal nil, @gauge.val
       assert_true @gauge.set 2.0
 
       assert_equal 2.0, @gauge.val
@@ -48,7 +48,7 @@ class CMetricsGaugeTest < Test::Unit::TestCase
     end
 
     def test_gauge
-      assert_equal 0.0, @gauge.val
+      assert_equal nil, @gauge.val
       assert_true @gauge.inc
       assert_equal 1.0, @gauge.val
 
@@ -77,7 +77,7 @@ class CMetricsGaugeTest < Test::Unit::TestCase
     end
 
     def test_gauge
-      assert_equal 0.0, @gauge.val
+      assert_equal nil, @gauge.val
       assert_true @gauge.set 2.0
 
       assert_equal 2.0, @gauge.val

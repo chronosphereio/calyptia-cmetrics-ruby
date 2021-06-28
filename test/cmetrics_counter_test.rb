@@ -10,7 +10,7 @@ class CMetricsCounterTest < Test::Unit::TestCase
     end
 
     def test_counter
-      assert_equal 0.0, @counter.val
+      assert_equal nil, @counter.val
       assert_true @counter.inc
       assert_equal 1.0, @counter.val
 
@@ -39,7 +39,7 @@ class CMetricsCounterTest < Test::Unit::TestCase
     end
 
     def test_counter
-      assert_equal 0.0, @counter.val
+      assert_equal nil, @counter.val
       assert_true @counter.inc
       assert_equal 1.0, @counter.val
 
@@ -68,7 +68,7 @@ class CMetricsCounterTest < Test::Unit::TestCase
     end
 
     def test_counter
-      assert_equal 0.0, @counter.val
+      assert_equal nil, @counter.val
       assert_true @counter.inc
       assert_equal 1.0, @counter.val
 
