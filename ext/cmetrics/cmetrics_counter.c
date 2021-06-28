@@ -537,7 +537,6 @@ rb_cmetrics_counter_to_msgpack(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsCounter, &rb_cmetrics_counter_type, cmetricsCounter);
 
-
     ret = cmt_encode_msgpack(cmetricsCounter->instance, &buffer, &buffer_size);
 
     if (ret == 0) {

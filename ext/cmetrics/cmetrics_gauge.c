@@ -710,7 +710,6 @@ rb_cmetrics_gauge_to_msgpack(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsGauge, &rb_cmetrics_gauge_type, cmetricsGauge);
 
-
     ret = cmt_encode_msgpack(cmetricsGauge->instance, &buffer, &buffer_size);
 
     if (ret == 0) {
