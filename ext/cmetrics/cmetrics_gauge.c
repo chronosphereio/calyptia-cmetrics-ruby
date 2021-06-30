@@ -75,6 +75,8 @@ rb_cmetrics_gauge_initialize(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsGauge, &rb_cmetrics_gauge_type, cmetricsGauge);
 
+    cmt_initialize();
+
     cmetricsGauge->instance = cmt_create();
     cmetricsGauge->gauge = NULL;
 

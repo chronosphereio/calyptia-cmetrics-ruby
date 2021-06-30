@@ -75,6 +75,8 @@ rb_cmetrics_counter_initialize(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsCounter, &rb_cmetrics_counter_type, cmetricsCounter);
 
+    cmt_initialize();
+
     cmetricsCounter->instance = cmt_create();
     cmetricsCounter->counter = NULL;
 
