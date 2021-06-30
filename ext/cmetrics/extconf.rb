@@ -9,4 +9,6 @@ find_library("xxhash", nil, __dir__)
 find_library("mpack", nil, __dir__)
 find_library("cmetrics", nil, __dir__)
 
+have_func("gmtime_s", "time.h")
+
 create_makefile("cmetrics/cmetrics")

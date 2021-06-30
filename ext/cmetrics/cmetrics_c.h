@@ -20,6 +20,13 @@
 #ifndef _CMETRICS_C_H_
 #define _CMETRICS_C_H_
 
+#ifdef HAVE_GMTIME_S
+/* ruby.h provides same gmtime_r definition on Windows.
+ * We disable cmetrics' one for now.
+ */
+# define CMT_HAVE_GMTIME_S 0
+#endif
+
 #include <ruby.h>
 #include <ruby/encoding.h>
 /* Include cmetrics header */
