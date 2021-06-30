@@ -33,6 +33,7 @@
 #include <cmetrics/cmetrics.h>
 #include <cmetrics/cmt_counter.h>
 #include <cmetrics/cmt_gauge.h>
+#include <cmetrics/cmt_encode_influx.h>
 #include <cmetrics/cmt_encode_prometheus.h>
 #include <cmetrics/cmt_encode_msgpack.h>
 #include <cmetrics/cmt_encode_text.h>

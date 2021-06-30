@@ -68,6 +68,30 @@ cmt_labels_test{dev="Calyptia",lang="C",host="calyptia.com",app="cmetrics"} 2 \\
 EOC
       assert_match(/#{expected2}/, gauge.to_prometheus)
     end
+
+    def test_influx
+      gauge = CMetrics::Gauge.new
+      gauge.create("cmt", "labels", "test", "Static labels test", ["host", "app"])
+
+      gauge.inc
+      gauge.inc(["calyptia.com", "cmetrics"])
+      gauge.inc(["calyptia.com", "cmetrics"])
+
+      expected = <<-EOC
+cmt_labels test=1 \\d+
+cmt_labels,host=calyptia.com,app=cmetrics test=2 \\d+
+EOC
+      assert_match(/#{expected}/, gauge.to_influx)
+
+      assert_true gauge.add_label("dev", "Calyptia")
+      assert_true gauge.add_label("lang", "C")
+
+      expected2 = <<-EOC
+cmt_labels,dev=Calyptia,lang=C test=1 \\d+
+cmt_labels,dev=Calyptia,lang=C,host=calyptia.com,app=cmetrics test=2 \\d+
+EOC
+      assert_match(/#{expected2}/, gauge.to_influx)
+    end
   end
 
   sub_test_case "gauge w/ one symbol" do

@@ -734,6 +734,25 @@ rb_cmetrics_gauge_add_label(VALUE self, VALUE rb_key, VALUE rb_value)
 }
 
 static VALUE
+rb_cmetrics_gauge_to_influx(VALUE self)
+{
+    struct CMetricsGauge* cmetricsGauge;
+    cmt_sds_t prom;
+    VALUE str;
+
+    TypedData_Get_Struct(
+            self, struct CMetricsGauge, &rb_cmetrics_gauge_type, cmetricsGauge);
+
+    prom = cmt_encode_influx_create(cmetricsGauge->instance);
+
+    str = rb_str_new2(prom);
+
+    cmt_encode_influx_destroy(prom);
+
+    return str;
+}
+
+static VALUE
 rb_cmetrics_gauge_to_prometheus(VALUE self)
 {
     struct CMetricsGauge* cmetricsGauge;
@@ -815,6 +834,7 @@ void Init_cmetrics_gauge(VALUE rb_mCMetrics)
     rb_define_method(rb_cGauge, "val=", rb_cmetrics_gauge_set, -1);
     rb_define_method(rb_cGauge, "value=", rb_cmetrics_gauge_set, -1);
     rb_define_method(rb_cGauge, "add_label", rb_cmetrics_gauge_add_label, 2);
+    rb_define_method(rb_cGauge, "to_influx", rb_cmetrics_gauge_to_influx, 0);
     rb_define_method(rb_cGauge, "to_prometheus", rb_cmetrics_gauge_to_prometheus, 0);
     rb_define_method(rb_cGauge, "to_msgpack", rb_cmetrics_gauge_to_msgpack, 0);
     rb_define_method(rb_cGauge, "to_s", rb_cmetrics_gauge_to_text, 0);

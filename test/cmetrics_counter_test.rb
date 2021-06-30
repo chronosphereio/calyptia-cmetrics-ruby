@@ -60,6 +60,30 @@ cmt_labels_test{dev="Calyptia",lang="C",host="calyptia.com",app="cmetrics"} 2 \\
 EOC
       assert_match(/#{expected2}/, counter.to_prometheus)
     end
+
+    def test_influx
+      counter = CMetrics::Counter.new
+      counter.create("cmt", "labels", "test", "Static labels test", ["host", "app"])
+
+      counter.inc
+      counter.inc(["calyptia.com", "cmetrics"])
+      counter.inc(["calyptia.com", "cmetrics"])
+
+      expected = <<-EOC
+cmt_labels test=1 \\d+
+cmt_labels,host=calyptia.com,app=cmetrics test=2 \\d+
+EOC
+      assert_match(/#{expected}/, counter.to_influx)
+
+      assert_true counter.add_label("dev", "Calyptia")
+      assert_true counter.add_label("lang", "C")
+
+      expected2 = <<-EOC
+cmt_labels,dev=Calyptia,lang=C test=1 \\d+
+cmt_labels,dev=Calyptia,lang=C,host=calyptia.com,app=cmetrics test=2 \\d+
+EOC
+      assert_match(/#{expected2}/, counter.to_influx)
+    end
   end
 
   sub_test_case "counter w/ one symbol" do
