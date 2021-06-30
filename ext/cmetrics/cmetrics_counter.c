@@ -509,6 +509,56 @@ rb_cmetrics_counter_set(int argc, VALUE* argv, VALUE self)
     }
 }
 
+/*
+ * Set label into counter.
+ *
+ * @return [Boolean]
+ */
+
+static VALUE
+rb_cmetrics_counter_add_label(VALUE self, VALUE rb_key, VALUE rb_value)
+{
+    struct CMetricsCounter* cmetricsCounter;
+    char *key, *value;
+    int ret = 0;
+
+    TypedData_Get_Struct(
+            self, struct CMetricsCounter, &rb_cmetrics_counter_type, cmetricsCounter);
+
+    if (!cmetricsCounter->counter) {
+        rb_raise(rb_eRuntimeError, "Create counter with CMetrics::Counter#create first.");
+    }
+
+    switch(TYPE(rb_key)) {
+    case T_STRING:
+        key = StringValuePtr(rb_key);
+        break;
+    case T_SYMBOL:
+        key = RSTRING_PTR(rb_sym2str(rb_key));
+        break;
+    default:
+        rb_raise(rb_eArgError, "key should be String or Symbol class instance.");
+    }
+
+    switch(TYPE(rb_value)) {
+    case T_STRING:
+        value = StringValuePtr(rb_value);
+        break;
+    case T_SYMBOL:
+        value = RSTRING_PTR(rb_sym2str(rb_value));
+        break;
+    default:
+        rb_raise(rb_eArgError, "key should be String or Symbol class instance.");
+    }
+    ret = cmt_label_add(cmetricsCounter->instance, key, value);
+
+    if (ret == 0) {
+        return Qtrue;
+    } else {
+        return Qfalse;
+    }
+}
+
 static VALUE
 rb_cmetrics_counter_to_prometheus(VALUE self)
 {
@@ -587,6 +637,7 @@ void Init_cmetrics_counter(VALUE rb_mCMetrics)
     rb_define_method(rb_cCounter, "set", rb_cmetrics_counter_set, -1);
     rb_define_method(rb_cCounter, "val=", rb_cmetrics_counter_set, -1);
     rb_define_method(rb_cCounter, "value=", rb_cmetrics_counter_set, -1);
+    rb_define_method(rb_cCounter, "add_label", rb_cmetrics_counter_add_label, 2);
     rb_define_method(rb_cCounter, "to_prometheus", rb_cmetrics_counter_to_prometheus, 0);
     rb_define_method(rb_cCounter, "to_msgpack", rb_cmetrics_counter_to_msgpack, 0);
     rb_define_method(rb_cCounter, "to_s", rb_cmetrics_counter_to_text, 0);

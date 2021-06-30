@@ -32,6 +32,34 @@ class CMetricsCounterTest < Test::Unit::TestCase
       puts @counter.to_prometheus
       assert_not_nil @counter.to_s
     end
+
+    def test_prometheus
+      counter = CMetrics::Counter.new
+      counter.create("cmt", "labels", "test", "Static labels test", ["host", "app"])
+
+      counter.inc
+      counter.inc(["calyptia.com", "cmetrics"])
+      counter.inc(["calyptia.com", "cmetrics"])
+
+      expected = <<-EOC
+# HELP cmt_labels_test Static labels test
+# TYPE cmt_labels_test counter
+cmt_labels_test 1 \\d+
+cmt_labels_test{host="calyptia.com",app="cmetrics"} 2 \\d+
+EOC
+      assert_match(/#{expected}/, counter.to_prometheus)
+
+      assert_true counter.add_label("dev", "Calyptia")
+      assert_true counter.add_label("lang", "C")
+
+      expected2 = <<-EOC
+# HELP cmt_labels_test Static labels test
+# TYPE cmt_labels_test counter
+cmt_labels_test{dev="Calyptia",lang="C"} 1 \\d+
+cmt_labels_test{dev="Calyptia",lang="C",host="calyptia.com",app="cmetrics"} 2 \\d+
+EOC
+      assert_match(/#{expected2}/, counter.to_prometheus)
+    end
   end
 
   sub_test_case "counter w/ one symbol" do

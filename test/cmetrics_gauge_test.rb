@@ -40,6 +40,34 @@ class CMetricsGaugeTest < Test::Unit::TestCase
       puts @gauge.to_prometheus
       assert_not_nil @gauge.to_msgpack
     end
+
+    def test_prometheus
+      gauge = CMetrics::Gauge.new
+      gauge.create("cmt", "labels", "test", "Static labels test", ["host", "app"])
+
+      gauge.inc
+      gauge.inc(["calyptia.com", "cmetrics"])
+      gauge.inc(["calyptia.com", "cmetrics"])
+
+      expected = <<-EOC
+# HELP cmt_labels_test Static labels test
+# TYPE cmt_labels_test gauge
+cmt_labels_test 1 \\d+
+cmt_labels_test{host="calyptia.com",app="cmetrics"} 2 \\d+
+EOC
+      assert_match(/#{expected}/, gauge.to_prometheus)
+
+      assert_true gauge.add_label("dev", "Calyptia")
+      assert_true gauge.add_label("lang", "C")
+
+      expected2 = <<-EOC
+# HELP cmt_labels_test Static labels test
+# TYPE cmt_labels_test gauge
+cmt_labels_test{dev="Calyptia",lang="C"} 1 \\d+
+cmt_labels_test{dev="Calyptia",lang="C",host="calyptia.com",app="cmetrics"} 2 \\d+
+EOC
+      assert_match(/#{expected2}/, gauge.to_prometheus)
+    end
   end
 
   sub_test_case "gauge w/ one symbol" do
