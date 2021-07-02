@@ -103,7 +103,7 @@ EOC
         @counter.create("kubernetes", "network", "load", "Network load", ["hostname", "app"])
         @counter.inc
         @counter.inc(["localhost", "cmetrics"])
-        @counter.add(10.55, ["localhost", "test"])
+        @counter.add(10.50, ["localhost", "test"])
         @wired_buffer = @gauge.to_msgpack + @counter.to_msgpack
       end
 
@@ -111,6 +111,41 @@ EOC
         assert_true @serde.from_msgpack(@wired_buffer)
         buffer = @serde.to_msgpack
         assert_equal buffer.size, @wired_buffer.size
+        assert_not_nil @serde
+      end
+
+      test "encode text" do
+        assert_true @serde.from_msgpack(@wired_buffer)
+        assert_not_nil @serde.to_s
+      end
+
+      test "encode influx" do
+        assert_true @serde.from_msgpack(@wired_buffer)
+        expected = <<-EOC
+kubernetes_network load=2 \\d+
+kubernetes_network,hostname=localhost,app=cmetrics load=1 \\d+
+kubernetes_network,hostname=localhost,app=test load=10 \\d+
+kubernetes_network load=1 \\d+
+kubernetes_network,hostname=localhost,app=cmetrics load=1 \\d+
+kubernetes_network,hostname=localhost,app=test load=10.5 \\d+
+EOC
+        assert_match(/#{expected}/, @serde.to_influx)
+      end
+
+      test "encode prometheus" do
+        assert_true @serde.from_msgpack(@wired_buffer)
+        expected = <<-EOC
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load gauge\nkubernetes_network_load 2 \\d+
+kubernetes_network_load{hostname=\"localhost\",app=\"cmetrics\"} 1 \\d+
+kubernetes_network_load{hostname=\"localhost\",app=\"test\"} 10 \\d+
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load counter
+kubernetes_network_load 1 \\d+
+kubernetes_network_load{hostname=\"localhost\",app=\"cmetrics\"} 1 \\d+
+kubernetes_network_load{hostname=\"localhost\",app=\"test\"} 10.5 \\d+
+EOC
+        assert_match(/#{expected}/, @serde.to_prometheus)
       end
     end
   end
