@@ -34,6 +34,7 @@
 #include <cmetrics/cmt_encode_prometheus.h>
 #include <cmetrics/cmt_encode_msgpack.h>
 #include <cmetrics/cmt_encode_text.h>
+#include <cmetrics/cmt_decode_msgpack.h>
 
 struct CMetricsCounter {
     struct cmt *instance;
@@ -45,7 +46,12 @@ struct CMetricsGauge {
     struct cmt_gauge *gauge;
 };
 
+struct CMetricsSerde {
+    struct cmt *instance;
+};
+
 void Init_cmetrics_counter(VALUE rb_mCMetrics);
 void Init_cmetrics_gauge(VALUE rb_mCMetrics);
+void Init_cmetrics_serde(VALUE rb_mCMetrics);
 
 #endif // _CMETRICS_C_H
