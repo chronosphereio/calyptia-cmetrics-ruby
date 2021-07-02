@@ -37,7 +37,7 @@ require 'cmetrics'
 @counter = CMetrics::Counter.new
 @counter.create("kubernetes", "network", "load", "Network load", ["hostname", "app"])
 
-@counter.val #=> 0.0
+@counter.val #=> nil
 @counter.inc #=> true
 
 @counter.val #=> 1.0
@@ -70,7 +70,7 @@ require 'cmetrics'
 @gauge = CMetrics::Gauge.new
 @gauge.create("kubernetes", "network", "load", "Network load", ["hostname", "app"])
 
-@gauge.val #=> 0.0
+@gauge.val #=> nil
 @gauge.inc #=> true
 
 @gauge.val #=> 1.0
@@ -86,6 +86,73 @@ require 'cmetrics'
 
 @gauge.sub(2.5, ["localhost", "test"]) #=> true
 @gauge.val(["localhost", "test"]) #=> 7.5
+```
+
+### Serde
+
+`CMetrics::Serde` is for a decoding (and encoding to some format stuffs) from msgpacked buffers that are created by `CMetrics::Counter#to_msgpack` or `CMetrics::Gauge#to_msgpack`.
+
+#### For Counter class instance(s)
+
+```ruby
+require 'cmetrics'
+
+@counter = CMetrics::Counter.new
+@counter.create("kubernetes", "network", "load", "Network load", ["hostname", "app"])
+@counter.inc
+@counter.inc(["calyptia.com", "cmetrics"])
+@counter.inc(["calyptia.com", "cmetrics"])
+@buffer = @counter.to_msgpack
+@serde = CMetrics::Serde.new
+
+@serde.from_msgpack(@buffer)
+puts @serde #=> Decoded object is shown with text
+```
+
+#### For Gauge class instance(s)
+
+```ruby
+require 'cmetrics'
+
+@gauge = CMetrics::Gauge.new
+@gauge.create("kubernetes", "network", "load", "Network load", ["hostname", "app"])
+@gauge.inc
+@gauge.inc(["calyptia.com", "cmetrics"])
+@gauge.inc(["calyptia.com", "cmetrics"])
+@buffer = @gauge.to_msgpack
+@serde = CMetrics::Serde.new
+
+@serde.from_msgpack(@buffer)
+puts @serde #=> Decoded object is shown with text
+```
+
+#### For wired buffer (multiple concatenated instances context)
+
+```ruby
+require 'cmetrics'
+
+@gauge = CMetrics::Gauge.new
+@gauge.create("kubernetes", "network", "load", "Network load", ["hostname", "app"])
+@gauge.set 2.0
+@gauge.inc(["localhost", "cmetrics"])
+@gauge.add(10, ["localhost", "test"])
+@counter = CMetrics::Counter.new
+@counter.create("kubernetes", "network", "load", "Network load", ["hostname", "app"])
+@counter.inc
+@counter.inc(["localhost", "cmetrics"])
+@counter.add(10.55, ["localhost", "test"])
+@counter2 = CMetrics::Counter.new
+@counter2.create("cmt", "labels", "test", "Static labels test", ["host", "app"])
+@counter2.inc
+@counter2.inc(["calyptia.com", "cmetrics"])
+@counter2.inc(["calyptia.com", "cmetrics"])
+@counter2.add_label("dev", "Calyptia")
+@counter2.add_label("lang", "C")
+@wired_buffer = @gauge.to_msgpack + @counter.to_msgpack + @counter2.to_msgpack
+@serde = CMetrics::Serde.new
+
+@serde.from_msgpack(@wired_buffer)
+puts @serde
 ```
 
 ## Development
