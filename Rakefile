@@ -11,6 +11,8 @@ Rake::TestTask.new(:test) do |t|
   t.test_files = FileList["test/**/*_test.rb"]
 end
 
+task compile: [:"build:cmetrics"]
+
 task default: [:"build:cmetrics", :compile, :test]
 
 task test: [:"build:cmetrics", :compile]
