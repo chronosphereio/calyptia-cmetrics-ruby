@@ -39,7 +39,7 @@ class BuildCMetrics
     @checkpoint = ".#{@recipe.name}-#{@recipe.version}.installed"
     @recipe.files << {
       url: "file://#{File.dirname(__FILE__)}/ext/#{@recipe.name}-#{@recipe.version}.tar.gz",
-      sha256sum: "0ec23bb8848e2c1cdcab7140cc8784036c75795d5883e0c599f4a3e80911af5a",
+      sha256sum: "8fc53c492adf7a3c9f157ee8ae7fab258c61970354e54da7d093af402e440455",
     }
   end
 
