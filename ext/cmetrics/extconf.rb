@@ -28,7 +28,7 @@ class BuildCMetrics
     @recipe.target = File.join(ROOT, "ports")
     @recipe.files << {
       url: "file://#{ROOT}/ext/#{@recipe.name}-#{@recipe.version}.tar.gz",
-      sha256sum: "8fc53c492adf7a3c9f157ee8ae7fab258c61970354e54da7d093af402e440455",
+      sha256sum: "314a48978f364e1d3631158f28055180e2e846858ada76d9b50713cb74d17444",
     }
   end
 
