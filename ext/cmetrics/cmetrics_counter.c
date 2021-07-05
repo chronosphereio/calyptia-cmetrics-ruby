@@ -627,7 +627,7 @@ rb_cmetrics_counter_to_text(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsCounter, &rb_cmetrics_counter_type, cmetricsCounter);
 
-    buffer = cmt_encode_text_create(cmetricsCounter->instance);
+    buffer = cmt_encode_text_create(cmetricsCounter->instance, CMT_TRUE);
     if (buffer == NULL) {
         return Qnil;
     }

@@ -169,7 +169,7 @@ rb_cmetrics_serde_to_text(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsSerde, &rb_cmetrics_serde_type, cmetricsSerde);
 
-    buffer = cmt_encode_text_create(cmetricsSerde->instance);
+    buffer = cmt_encode_text_create(cmetricsSerde->instance, CMT_TRUE);
     if (buffer == NULL) {
         return Qnil;
     }

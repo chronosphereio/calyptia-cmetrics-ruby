@@ -801,7 +801,7 @@ rb_cmetrics_gauge_to_text(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsGauge, &rb_cmetrics_gauge_type, cmetricsGauge);
 
-    buffer = cmt_encode_text_create(cmetricsGauge->instance);
+    buffer = cmt_encode_text_create(cmetricsGauge->instance, CMT_TRUE);
     if (buffer == NULL) {
         return Qnil;
     }
