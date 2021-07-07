@@ -21,9 +21,17 @@
 
 VALUE rb_mCMetrics;
 
+static VALUE
+rb_cmetrics_library_version(VALUE self)
+{
+    return rb_str_new2(cmt_version());
+}
+
 void Init_cmetrics(void)
 {
     rb_mCMetrics = rb_define_module("CMetrics");
+
+    rb_define_singleton_method(rb_mCMetrics, "library_version", rb_cmetrics_library_version , 0);
 
     Init_cmetrics_counter(rb_mCMetrics);
     Init_cmetrics_gauge(rb_mCMetrics);

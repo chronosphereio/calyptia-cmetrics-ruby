@@ -8,4 +8,10 @@ class CMetricsTest < Test::Unit::TestCase
       ::CMetrics.const_defined?(:VERSION)
     end
   end
+
+  test "library version" do
+    assert do
+      ::CMetrics.library_version
+    end
+  end
 end
