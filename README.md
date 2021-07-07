@@ -151,6 +151,7 @@ require 'cmetrics'
 @wired_buffer = @gauge.to_msgpack + @counter.to_msgpack + @counter2.to_msgpack
 @serde = CMetrics::Serde.new
 
+puts "-----Decode with procedural style-----"
 # Decode for the context 1
 @serde.from_msgpack(@wired_buffer)
 puts @serde.to_prometheus
@@ -160,6 +161,12 @@ puts @serde.to_prometheus
 # Decode for the context 3
 @serde.from_msgpack(@wired_buffer)
 puts @serde.to_prometheus
+
+puts "-----Decode with streaming style-----"
+# Or, use streaming style API
+@serde.feed_each(@wired_buffer) do |serde|
+  puts serde.to_prometheus
+end
 ```
 
 ## Development
