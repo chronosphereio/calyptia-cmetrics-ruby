@@ -721,7 +721,7 @@ rb_cmetrics_gauge_add_label(VALUE self, VALUE rb_key, VALUE rb_value)
         value = RSTRING_PTR(rb_sym2str(rb_value));
         break;
     default:
-        rb_raise(rb_eArgError, "key should be String or Symbol class instance.");
+        rb_raise(rb_eArgError, "value should be String or Symbol class instance.");
     }
 
     ret = cmt_label_add(cmetricsGauge->instance, key, value);
