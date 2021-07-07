@@ -48,6 +48,7 @@ struct CMetricsGauge {
 
 struct CMetricsSerde {
     struct cmt *instance;
+    size_t unpack_msgpack_offset;
 };
 
 void Init_cmetrics_counter(VALUE rb_mCMetrics);

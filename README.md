@@ -151,8 +151,15 @@ require 'cmetrics'
 @wired_buffer = @gauge.to_msgpack + @counter.to_msgpack + @counter2.to_msgpack
 @serde = CMetrics::Serde.new
 
+# Decode for the context 1
 @serde.from_msgpack(@wired_buffer)
-puts @serde
+puts @serde.to_prometheus
+# Decode for the context 2
+@serde.from_msgpack(@wired_buffer)
+puts @serde.to_prometheus
+# Decode for the context 3
+@serde.from_msgpack(@wired_buffer)
+puts @serde.to_prometheus
 ```
 
 ## Development

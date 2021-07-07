@@ -75,28 +75,50 @@ rb_cmetrics_serde_initialize(VALUE self)
     cmt_initialize();
 
     cmetricsSerde->instance = NULL;
+    cmetricsSerde->unpack_msgpack_offset = 0;
 
     return Qnil;
 }
 
 static VALUE
-rb_cmetrics_serde_from_msgpack(VALUE self, VALUE rb_msgpack_buffer)
+rb_cmetrics_serde_from_msgpack(int argc, VALUE *argv, VALUE self)
 {
+    VALUE rb_msgpack_buffer = NULL, rb_msgpack_length = NULL, rb_offset = NULL;
     struct CMetricsSerde* cmetricsSerde;
     char *buffer;
     size_t buffer_size;
     int ret = 0;
     struct cmt *cmt = NULL;
     size_t offset = 0;
+    size_t msgpack_length = 0;
 
     TypedData_Get_Struct(
             self, struct CMetricsSerde, &rb_cmetrics_serde_type, cmetricsSerde);
 
-    ret = cmt_decode_msgpack_create(&cmt, StringValuePtr(rb_msgpack_buffer), RSTRING_LEN(rb_msgpack_buffer), &offset);
+    rb_scan_args(argc, argv, "12", &rb_msgpack_buffer, &rb_msgpack_length, &rb_offset);
+    if (!NIL_P(rb_msgpack_length)) {
+        Check_Type(rb_msgpack_length, T_FIXNUM);
+        msgpack_length = INT2NUM(rb_msgpack_length);
+    } else {
+        msgpack_length = RSTRING_LEN(rb_msgpack_buffer);
+    }
+    if (!NIL_P(rb_offset)) {
+        Check_Type(rb_offset, T_FIXNUM);
+        offset = NUM2INT(rb_offset);
+    } else {
+        offset = cmetricsSerde->unpack_msgpack_offset;
+    }
 
+    if (offset >= msgpack_length) {
+        rb_raise(rb_eRuntimeError, "offset should be smaller than msgpack buffer size.");
+    }
+
+    ret = cmt_decode_msgpack_create(&cmt, StringValuePtr(rb_msgpack_buffer), msgpack_length, &offset);
 
     if (ret == 0) {
         cmetricsSerde->instance = cmt;
+        cmetricsSerde->unpack_msgpack_offset = offset;
+
         return Qtrue;
     } else {
         return Qnil;
@@ -189,7 +211,7 @@ void Init_cmetrics_serde(VALUE rb_mCMetrics)
     rb_define_alloc_func(rb_cSerde, rb_cmetrics_serde_alloc);
 
     rb_define_method(rb_cSerde, "initialize", rb_cmetrics_serde_initialize, 0);
-    rb_define_method(rb_cSerde, "from_msgpack", rb_cmetrics_serde_from_msgpack, 1);
+    rb_define_method(rb_cSerde, "from_msgpack", rb_cmetrics_serde_from_msgpack, -1);
     rb_define_method(rb_cSerde, "to_prometheus", rb_cmetrics_serde_to_prometheus, 0);
     rb_define_method(rb_cSerde, "to_influx", rb_cmetrics_serde_to_influx, 0);
     rb_define_method(rb_cSerde, "to_msgpack", rb_cmetrics_serde_to_msgpack, 0);
