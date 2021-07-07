@@ -782,7 +782,7 @@ rb_cmetrics_gauge_to_msgpack(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsGauge, &rb_cmetrics_gauge_type, cmetricsGauge);
 
-    ret = cmt_encode_msgpack(cmetricsGauge->instance, &buffer, &buffer_size);
+    ret = cmt_encode_msgpack_create(cmetricsGauge->instance, &buffer, &buffer_size);
 
     if (ret == 0) {
         return rb_str_new(buffer, buffer_size);
@@ -801,7 +801,7 @@ rb_cmetrics_gauge_to_text(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsGauge, &rb_cmetrics_gauge_type, cmetricsGauge);
 
-    buffer = cmt_encode_text_create(cmetricsGauge->instance, CMT_TRUE);
+    buffer = cmt_encode_text_create(cmetricsGauge->instance);
     if (buffer == NULL) {
         return Qnil;
     }

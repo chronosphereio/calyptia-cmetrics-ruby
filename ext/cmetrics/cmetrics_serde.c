@@ -87,11 +87,12 @@ rb_cmetrics_serde_from_msgpack(VALUE self, VALUE rb_msgpack_buffer)
     size_t buffer_size;
     int ret = 0;
     struct cmt *cmt = NULL;
+    size_t offset = 0;
 
     TypedData_Get_Struct(
             self, struct CMetricsSerde, &rb_cmetrics_serde_type, cmetricsSerde);
 
-    ret = cmt_decode_msgpack(&cmt, StringValuePtr(rb_msgpack_buffer), RSTRING_LEN(rb_msgpack_buffer));
+    ret = cmt_decode_msgpack_create(&cmt, StringValuePtr(rb_msgpack_buffer), RSTRING_LEN(rb_msgpack_buffer), &offset);
 
 
     if (ret == 0) {
@@ -150,7 +151,7 @@ rb_cmetrics_serde_to_msgpack(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsSerde, &rb_cmetrics_serde_type, cmetricsSerde);
 
-    ret = cmt_encode_msgpack(cmetricsSerde->instance, &buffer, &buffer_size);
+    ret = cmt_encode_msgpack_create(cmetricsSerde->instance, &buffer, &buffer_size);
 
     if (ret == 0) {
         return rb_str_new(buffer, buffer_size);
@@ -169,7 +170,7 @@ rb_cmetrics_serde_to_text(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsSerde, &rb_cmetrics_serde_type, cmetricsSerde);
 
-    buffer = cmt_encode_text_create(cmetricsSerde->instance, CMT_TRUE);
+    buffer = cmt_encode_text_create(cmetricsSerde->instance);
     if (buffer == NULL) {
         return Qnil;
     }
@@ -187,6 +188,7 @@ void Init_cmetrics_serde(VALUE rb_mCMetrics)
 
     rb_define_alloc_func(rb_cSerde, rb_cmetrics_serde_alloc);
 
+    rb_define_method(rb_cSerde, "initialize", rb_cmetrics_serde_initialize, 0);
     rb_define_method(rb_cSerde, "from_msgpack", rb_cmetrics_serde_from_msgpack, 1);
     rb_define_method(rb_cSerde, "to_prometheus", rb_cmetrics_serde_to_prometheus, 0);
     rb_define_method(rb_cSerde, "to_influx", rb_cmetrics_serde_to_influx, 0);

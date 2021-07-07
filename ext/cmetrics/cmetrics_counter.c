@@ -608,7 +608,7 @@ rb_cmetrics_counter_to_msgpack(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsCounter, &rb_cmetrics_counter_type, cmetricsCounter);
 
-    ret = cmt_encode_msgpack(cmetricsCounter->instance, &buffer, &buffer_size);
+    ret = cmt_encode_msgpack_create(cmetricsCounter->instance, &buffer, &buffer_size);
 
     if (ret == 0) {
         return rb_str_new(buffer, buffer_size);
@@ -627,7 +627,7 @@ rb_cmetrics_counter_to_text(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsCounter, &rb_cmetrics_counter_type, cmetricsCounter);
 
-    buffer = cmt_encode_text_create(cmetricsCounter->instance, CMT_TRUE);
+    buffer = cmt_encode_text_create(cmetricsCounter->instance);
     if (buffer == NULL) {
         return Qnil;
     }
