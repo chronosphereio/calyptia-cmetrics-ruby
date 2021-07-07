@@ -83,10 +83,8 @@ rb_cmetrics_serde_initialize(VALUE self)
 static VALUE
 rb_cmetrics_serde_from_msgpack(int argc, VALUE *argv, VALUE self)
 {
-    VALUE rb_msgpack_buffer = NULL, rb_msgpack_length = NULL, rb_offset = NULL;
+    VALUE rb_msgpack_buffer, rb_msgpack_length, rb_offset;
     struct CMetricsSerde* cmetricsSerde;
-    char *buffer;
-    size_t buffer_size;
     int ret = 0;
     struct cmt *cmt = NULL;
     size_t offset = 0;
