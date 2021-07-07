@@ -26,6 +26,10 @@
 
 #include <ruby.h>
 #include <ruby/encoding.h>
+#ifdef memcpy
+# undef memcpy /* Provide more clean environment. And prevent
+                * macro pollution from ruby.h */
+#endif
 /* Include cmetrics header */
 #include <cmetrics/cmetrics.h>
 #include <cmetrics/cmt_counter.h>
