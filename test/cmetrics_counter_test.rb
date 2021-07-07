@@ -16,7 +16,12 @@ class CMetricsCounterTest < Test::Unit::TestCase
 
       assert_true @counter.add 2.0
       assert_equal 3.0, @counter.val
-      puts @counter.to_prometheus
+      expected = <<-EOC
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load counter
+kubernetes_network_load 3 \\d+
+EOC
+      assert_match(/#{expected}/, @counter.to_prometheus)
       assert_not_nil @counter.to_s
     end
 
@@ -29,7 +34,13 @@ class CMetricsCounterTest < Test::Unit::TestCase
 
       assert_true @counter.set(12.15, ["localhost", "test"])
       assert_false @counter.set(1, ["localhost", "test"])
-      puts @counter.to_prometheus
+      expected = <<-EOC
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load counter
+kubernetes_network_load{hostname="localhost",app="cmetrics"} 1 \\d+
+kubernetes_network_load{hostname="localhost",app="test"} 12.15 \\d+
+EOC
+      assert_match(/#{expected}/, @counter.to_prometheus)
       assert_not_nil @counter.to_s
     end
 
@@ -99,7 +110,12 @@ EOC
 
       assert_true @counter.add 2.0
       assert_equal 3.0, @counter.val
-      puts @counter.to_prometheus
+      expected = <<-EOC
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load counter
+kubernetes_network_load 3 \\d+
+EOC
+      assert_match(/#{expected}/, @counter.to_prometheus)
       assert_not_nil @counter.to_s
     end
 
@@ -112,7 +128,13 @@ EOC
 
       assert_true @counter.set(12.15, :k8s_worker)
       assert_false @counter.set(1, :k8s_worker)
-      puts @counter.to_prometheus
+      expected = <<-EOC
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load counter
+kubernetes_network_load{hostname="localhost"} 1 \\d+
+kubernetes_network_load{hostname="k8s_worker"} 12.15 \\d+
+EOC
+      assert_match(/#{expected}/, @counter.to_prometheus)
       assert_not_nil @counter.to_s
     end
   end
@@ -130,7 +152,12 @@ EOC
 
       assert_true @counter.add 2.0
       assert_equal 3.0, @counter.val
-      puts @counter.to_prometheus
+      expected = <<-EOC
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load counter
+kubernetes_network_load 3 \\d+
+EOC
+      assert_match(/#{expected}/, @counter.to_prometheus)
       assert_not_nil @counter.to_s
     end
 
@@ -143,7 +170,13 @@ EOC
 
       assert_true @counter.set(12.15, [:localhost, :test])
       assert_false @counter.set(1, [:localhost, :test])
-      puts @counter.to_prometheus
+      expected = <<-EOC
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load counter
+kubernetes_network_load{hostname="localhost",app="cmetrics"} 1 \\d+
+kubernetes_network_load{hostname="localhost",app="test"} 12.15 \\d+
+EOC
+      assert_match(/#{expected}/, @counter.to_prometheus)
       assert_not_nil @counter.to_msgpack
       assert_not_nil @counter.to_s
     end

@@ -23,7 +23,12 @@ class CMetricsGaugeTest < Test::Unit::TestCase
 
       assert_true @gauge.dec
       assert_equal 0.0, @gauge.val
-      puts @gauge.to_prometheus
+      expected = <<-EOC
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load gauge
+kubernetes_network_load 0 \\d+
+EOC
+      assert_match(/#{expected}/, @gauge.to_prometheus)
       assert_not_nil @gauge.to_s
     end
 
@@ -37,7 +42,13 @@ class CMetricsGaugeTest < Test::Unit::TestCase
       assert_true @gauge.sub(2.5, ["localhost", "test"])
       assert_equal 7.5, @gauge.val(["localhost", "test"])
 
-      puts @gauge.to_prometheus
+      expected = <<-EOC
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load gauge
+kubernetes_network_load{hostname="localhost",app="cmetrics"} 1 \\d+
+kubernetes_network_load{hostname="localhost",app="test"} 7.5 \\d+
+EOC
+      assert_match(/#{expected}/, @gauge.to_prometheus)
       assert_not_nil @gauge.to_msgpack
     end
 
@@ -107,7 +118,12 @@ EOC
 
       assert_true @gauge.add 2.0
       assert_equal 3.0, @gauge.val
-      puts @gauge.to_prometheus
+      expected = <<-EOC
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load gauge
+kubernetes_network_load 3 \\d+
+EOC
+      assert_match(/#{expected}/, @gauge.to_prometheus)
       assert_not_nil @gauge.to_s
     end
 
@@ -120,7 +136,13 @@ EOC
 
       assert_true @gauge.set(12.15, :k8s_worker)
       assert_true @gauge.set(1, :k8s_worker)
-      puts @gauge.to_prometheus
+      expected = <<-EOC
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load gauge
+kubernetes_network_load{hostname="localhost"} 1 \\d+
+kubernetes_network_load{hostname="k8s_worker"} 1 \\d+
+EOC
+      assert_match(/#{expected}/, @gauge.to_prometheus)
       assert_not_nil @gauge.to_s
     end
   end
@@ -145,7 +167,12 @@ EOC
 
       assert_true @gauge.dec
       assert_equal 0.0, @gauge.val
-      puts @gauge.to_prometheus
+      expected = <<-EOC
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load gauge
+kubernetes_network_load 0 \\d+
+EOC
+      assert_match(/#{expected}/, @gauge.to_prometheus)
       assert_not_nil @gauge.to_s
     end
 
@@ -159,7 +186,13 @@ EOC
       assert_true @gauge.sub(2.5, [:localhost, :test])
       assert_equal 7.5, @gauge.val([:localhost, :test])
 
-      puts @gauge.to_prometheus
+      expected = <<-EOC
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load gauge
+kubernetes_network_load{hostname="localhost",app="cmetrics"} 1 \\d+
+kubernetes_network_load{hostname="localhost",app="test"} 7.5 \\d+
+EOC
+      assert_match(/#{expected}/, @gauge.to_prometheus)
       assert_not_nil @gauge.to_s
     end
   end
