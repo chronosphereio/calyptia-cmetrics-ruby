@@ -124,6 +124,41 @@ rb_cmetrics_serde_from_msgpack(int argc, VALUE *argv, VALUE self)
 }
 
 static VALUE
+rb_cmetrics_serde_from_msgpack_feed_each_impl(VALUE self, VALUE rb_msgpack_buffer, size_t msgpack_length)
+{
+    struct CMetricsSerde* cmetricsSerde;
+    struct cmt *cmt = NULL;
+    int ret = 0;
+
+    RETURN_ENUMERATOR(self, 0, 0);
+
+    TypedData_Get_Struct(
+            self, struct CMetricsSerde, &rb_cmetrics_serde_type, cmetricsSerde);
+
+    for (size_t offset = 0; offset <= msgpack_length; ) {
+        ret = cmt_decode_msgpack_create(&cmt, StringValuePtr(rb_msgpack_buffer), msgpack_length, &offset);
+        if (ret == 0) {
+            cmetricsSerde->instance = cmt;
+            cmetricsSerde->unpack_msgpack_offset = offset;
+
+            rb_yield(self);
+        } else {
+            return Qnil;
+        }
+    }
+
+    return Qnil;
+}
+
+static VALUE
+rb_cmetrics_serde_from_msgpack_feed_each(VALUE self, VALUE rb_data)
+{
+    RETURN_ENUMERATOR(self, 0, 0);
+
+    return rb_cmetrics_serde_from_msgpack_feed_each_impl(self, rb_data, RSTRING_LEN(rb_data));
+}
+
+static VALUE
 rb_cmetrics_serde_to_prometheus(VALUE self)
 {
     struct CMetricsSerde* cmetricsSerde;
@@ -213,5 +248,6 @@ void Init_cmetrics_serde(VALUE rb_mCMetrics)
     rb_define_method(rb_cSerde, "to_prometheus", rb_cmetrics_serde_to_prometheus, 0);
     rb_define_method(rb_cSerde, "to_influx", rb_cmetrics_serde_to_influx, 0);
     rb_define_method(rb_cSerde, "to_msgpack", rb_cmetrics_serde_to_msgpack, 0);
+    rb_define_method(rb_cSerde, "feed_each", rb_cmetrics_serde_from_msgpack_feed_each, 1);
     rb_define_method(rb_cSerde, "to_s", rb_cmetrics_serde_to_text, 0);
 }

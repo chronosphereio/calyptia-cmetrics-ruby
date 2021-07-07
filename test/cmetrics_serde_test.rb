@@ -108,6 +108,16 @@ EOC
       end
 
       sub_test_case "decode wired buffer" do
+        test "#feed_each" do
+          serdes = []
+          @serde.feed_each(@wired_buffer) do |serde|
+            serdes << serde.to_influx
+          end
+          assert_equal @gauge.to_influx, serdes[0]
+          # Trying to decode from the next offset.
+          assert_equal @counter.to_influx, serdes[1]
+        end
+
         test "explicit offset arguments" do
           assert_true @serde.from_msgpack(@wired_buffer, @wired_buffer.size)
           buffer = @serde.to_msgpack
@@ -128,6 +138,16 @@ EOC
       end
 
       sub_test_case "encode text" do
+        test "#feed_each" do
+          texts = []
+          @serde.feed_each(@wired_buffer) do |serde|
+            texts << serde.to_s
+          end
+          assert_not_nil texts[0].to_s
+          # Trying to decode from the next offset.
+          assert_not_nil texts[1].to_s
+        end
+
         test "explicit offset arguments" do
           assert_true @serde.from_msgpack(@wired_buffer)
           buffer = @serde.to_msgpack
@@ -148,6 +168,26 @@ EOC
       end
 
       sub_test_case "encode influx" do
+        test "#feed_each" do
+          encoded_influxes = []
+          @serde.feed_each(@wired_buffer) do |serde|
+            encoded_influxes << serde.to_influx
+          end
+          expected_gauge = <<-EOC
+kubernetes_network load=2 \\d+
+kubernetes_network,hostname=localhost,app=cmetrics load=1 \\d+
+kubernetes_network,hostname=localhost,app=test load=10 \\d+
+EOC
+          expected_counter = <<EOF
+kubernetes_network load=1 \\d+
+kubernetes_network,hostname=localhost,app=cmetrics load=1 \\d+
+kubernetes_network,hostname=localhost,app=test load=10.5 \\d+
+EOF
+          assert_match(/#{expected_gauge}/, encoded_influxes[0])
+          # Trying to decode from the next offset.
+          assert_match(/#{expected_counter}/, encoded_influxes[1])
+        end
+
         test "explicit offset arguments" do
           assert_true @serde.from_msgpack(@wired_buffer, @wired_buffer.size)
           decoded_gauge_buffer = @serde.to_msgpack
@@ -187,6 +227,29 @@ EOF
       end
 
       sub_test_case "encode prometheus" do
+        test "#feed_each" do
+          encoded_prometheuses = []
+          @serde.feed_each(@wired_buffer) do |serde|
+            encoded_prometheuses << serde.to_prometheus
+          end
+          expected_gauge = <<-EOC
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load gauge\nkubernetes_network_load 2 \\d+
+kubernetes_network_load{hostname=\"localhost\",app=\"cmetrics\"} 1 \\d+
+kubernetes_network_load{hostname=\"localhost\",app=\"test\"} 10 \\d+
+EOC
+          expected_counter = <<-EOF
+# HELP kubernetes_network_load Network load
+# TYPE kubernetes_network_load counter
+kubernetes_network_load 1 \\d+
+kubernetes_network_load{hostname=\"localhost\",app=\"cmetrics\"} 1 \\d+
+kubernetes_network_load{hostname=\"localhost\",app=\"test\"} 10.5 \\d+
+EOF
+          assert_match(/#{expected_gauge}/, encoded_prometheuses[0])
+          # Trying to decode from the next offset.
+          assert_match(/#{expected_counter}/, encoded_prometheuses[1])
+        end
+
         test "explicit offset arguments" do
           assert_true @serde.from_msgpack(@wired_buffer, @wired_buffer.length)
           decoded_gauge_buffer = @serde.to_msgpack
