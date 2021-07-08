@@ -6,6 +6,12 @@
 
 A Ruby binding for [cmetrics](https://github.com/calyptia/cmetrics).
 
+## Prerequisites
+
+* Ruby 2.4 or later with its headers
+* CMake 3.13 or later due to different directory TARGETS for bundled cmetrics installation
+* gcc or clang or some equivalents toolchain
+
 ## Installation
 
 Add this line to your application's Gemfile:
