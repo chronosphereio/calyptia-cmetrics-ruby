@@ -40,11 +40,11 @@ gauge_free(void* ptr)
     struct CMetricsGauge* cmetricsGauge = (struct CMetricsGauge*)ptr;
 
     if (!cmetricsGauge) {
-        if (!cmetricsGauge->instance) {
-            cmt_destroy(cmetricsGauge->instance);
-        }
         if (!cmetricsGauge->gauge) {
             cmt_gauge_destroy(cmetricsGauge->gauge);
+        }
+        if (!cmetricsGauge->instance) {
+            cmt_destroy(cmetricsGauge->instance);
         }
     }
 
