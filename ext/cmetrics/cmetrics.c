@@ -36,4 +36,5 @@ void Init_cmetrics(void)
     Init_cmetrics_counter(rb_mCMetrics);
     Init_cmetrics_gauge(rb_mCMetrics);
     Init_cmetrics_serde(rb_mCMetrics);
+    Init_cmetrics_untyped(rb_mCMetrics);
 }

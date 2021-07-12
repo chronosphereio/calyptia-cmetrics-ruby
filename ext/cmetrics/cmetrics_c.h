@@ -34,6 +34,7 @@
 #include <cmetrics/cmetrics.h>
 #include <cmetrics/cmt_counter.h>
 #include <cmetrics/cmt_gauge.h>
+#include <cmetrics/cmt_untyped.h>
 #include <cmetrics/cmt_encode_influx.h>
 #include <cmetrics/cmt_encode_prometheus.h>
 #include <cmetrics/cmt_encode_msgpack.h>
@@ -55,8 +56,14 @@ struct CMetricsSerde {
     size_t unpack_msgpack_offset;
 };
 
+struct CMetricsUntyped {
+    struct cmt *instance;
+    struct cmt_untyped *untyped;
+};
+
 void Init_cmetrics_counter(VALUE rb_mCMetrics);
 void Init_cmetrics_gauge(VALUE rb_mCMetrics);
 void Init_cmetrics_serde(VALUE rb_mCMetrics);
+void Init_cmetrics_untyped(VALUE rb_mCMetrics);
 
 #endif // _CMETRICS_C_H
