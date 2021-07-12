@@ -30,12 +30,12 @@ Or install it yourself as:
 
 ## Usage
 
+### Counter
+
 `CMetrics::Counter` is a cumulative metric that can only increase monotonically and reset to zero at restart.
 This class should be used for counting the total amount of record size or something like monotonic increasing values.
 
 ref: [Metric Types -- Counter | Prometheus documentation](https://prometheus.io/docs/concepts/metric_types/#counter)
-
-### Counter
 
 ```ruby
 require 'cmetrics'
@@ -92,6 +92,35 @@ require 'cmetrics'
 
 @gauge.sub(2.5, ["localhost", "test"]) #=> true
 @gauge.val(["localhost", "test"]) #=> 7.5
+```
+
+### Untyped
+
+`CMetrics::Untyped` is a metric that can only set a value via `#set` and reset to zero at restart.
+This class should be used for storing the increasing but discontinuous values.
+
+```ruby
+require 'cmetrics'
+
+@untyped = CMetrics::Untyped.new
+@untyped.create("kubernetes", "network", "load", "Network load", ["hostname", "app"])
+
+@untyped.val #=> nil
+
+@untyped.set 3.0 #=> true
+@untyped.val #=> 3.0
+
+# Multiple labels
+@untyped.set(1.0, ["localhost", "cmetrics"]) #=> true
+@untyped.val(["localhost", "cmetrics"]) #=> 1.0
+
+@untyped.set(10.55, ["localhost", "test"]) #=> true
+@untyped.val(["localhost", "test"]) #=> 10.55
+
+#CMetrics::Untyped can set greater value than stored.
+@untyped.set(12.15, ["localhost", "test"]) #=> true
+#CMetrics::Untyped cannot set smaller value than stored.
+@untyped.set(1, ["localhost", "test"]) #=> false
 ```
 
 ### Serde
