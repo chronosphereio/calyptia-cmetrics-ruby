@@ -27,8 +27,8 @@ class BuildCMetrics
     @checkpoint = ".#{@recipe.name}-#{@recipe.version}.installed"
     @recipe.target = File.join(ROOT, "ports")
     @recipe.files << {
-      url: "file://#{ROOT}/ext/#{@recipe.name}-#{@recipe.version}.tar.gz",
-      sha256sum: "3375ac1073b0bbea44ee9986601977ef04b119a74a7c663e2486a3ed31953203",
+      url: "https://codeload.github.com/calyptia/cmetrics/tar.gz/v#{version}",
+      sha256sum: "50f74147f8247dba434099e1075755097099c6bae77456da7322bb5ffb1f3f54",
     }
   end
 
@@ -52,7 +52,7 @@ class BuildCMetrics
   end
 end
 
-cmetrics = BuildCMetrics.new
+cmetrics = BuildCMetrics.new("0.1.4")
 cmetrics.build
 
 libdir = RbConfig::CONFIG["libdir"]
