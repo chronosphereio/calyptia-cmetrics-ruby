@@ -63,8 +63,6 @@ find_library("xxhash", nil, __dir__)
 find_library("mpack", nil, __dir__)
 find_library("cmetrics", nil, __dir__)
 
-$CFLAGS << " -std=c99 "
-
 have_func("gmtime_s", "time.h")
 
 create_makefile("cmetrics/cmetrics")
