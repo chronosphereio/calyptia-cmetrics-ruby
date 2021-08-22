@@ -284,7 +284,7 @@ format_metric(struct cmt *cmt, struct cmt_map *map,
     opts = map->opts;
 
     /* Measurement */
-    rb_hash_aset(rb_hash, rb_str_new2("namespace"), rb_str_new2(opts->namespace));
+    rb_hash_aset(rb_hash, rb_str_new2("namespace"), rb_str_new2(opts->ns));
     rb_hash_aset(rb_hash, rb_str_new2("subsystem"), rb_str_new2(opts->subsystem));
 
     /* Static labels (tags) */
