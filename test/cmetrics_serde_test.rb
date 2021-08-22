@@ -48,6 +48,16 @@ kubernetes_network_load{hostname=\"calyptia.com\",app=\"cmetrics\"} 2 \\d+
 EOC
         assert_match(/#{expected}/, @serde.to_prometheus)
       end
+
+      test "decode as Hash" do
+        assert_true @serde.from_msgpack(@buffer)
+        expected = [
+          {"namespace"=>"kubernetes", "subsystem"=>"network", "name"=>"load", "description"=>"Network load", "value"=>1.0},
+          {"namespace"=>"kubernetes", "subsystem"=>"network", "labels"=>{"hostname"=>"calyptia.com", "app"=>"cmetrics"}, "name"=>"load", "description"=>"Network load", "value"=>2.0}
+        ]
+        assert_equal([[Float], [Float]], @serde.to_h.map{|e| e.select{|k| k == "timestamp"}.values.map{|e| e.class}})
+        assert_equal(expected, @serde.to_h.map{|e| e.reject!{|k| k == "timestamp"}})
+      end
     end
 
     sub_test_case "w/ gauge" do
@@ -89,6 +99,16 @@ kubernetes_network_load 1 \\d+
 kubernetes_network_load{hostname=\"calyptia.com\",app=\"cmetrics\"} 2 \\d+
 EOC
         assert_match(/#{expected}/, @serde.to_prometheus)
+      end
+
+      test "decode as Hash" do
+        assert_true @serde.from_msgpack(@buffer)
+        expected = [
+          {"namespace"=>"kubernetes", "subsystem"=>"network", "name"=>"load", "description"=>"Network load", "value"=>1.0},
+          {"namespace"=>"kubernetes", "subsystem"=>"network", "labels"=>{"hostname"=>"calyptia.com", "app"=>"cmetrics"}, "name"=>"load", "description"=>"Network load", "value"=>2.0}
+        ]
+        assert_equal([[Float], [Float]], @serde.to_h.map{|e| e.select{|k| k == "timestamp"}.values.map{|e| e.class}})
+        assert_equal(expected, @serde.to_h.map{|e| e.reject!{|k| k == "timestamp"}})
       end
     end
 
@@ -291,6 +311,20 @@ EOF
           # Trying to decode from the next offset.
           assert_true @serde.from_msgpack(@wired_buffer)
           assert_match(/#{expected_counter}/, @serde.to_prometheus)
+        end
+      end
+
+      sub_test_case "decode as Hash" do
+        test "decode as Hash" do
+          assert_true @serde.from_msgpack(@wired_buffer)
+
+          expected = [
+            {"namespace"=>"kubernetes", "subsystem"=>"network", "name"=>"load", "description"=>"Network load", "value"=>2.0},
+            {"namespace"=>"kubernetes", "subsystem"=>"network", "labels"=>{"hostname"=>"localhost", "app"=>"cmetrics"}, "name"=>"load", "description"=>"Network load", "value"=>1.0},
+            {"namespace"=>"kubernetes", "subsystem"=>"network", "labels"=>{"hostname"=>"localhost", "app"=>"test"}, "name"=>"load", "description"=>"Network load", "value"=>10.0}
+          ]
+          assert_equal([[Float], [Float], [Float]], @serde.to_h.map{|e| e.select{|k| k == "timestamp"}.values.map{|e| e.class}})
+        assert_equal(expected, @serde.to_h.map{|e| e.reject!{|k| k == "timestamp"}})
         end
       end
     end
