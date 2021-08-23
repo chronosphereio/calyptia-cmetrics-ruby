@@ -349,6 +349,7 @@ static VALUE
 rb_cmetrics_serde_get_metrics(VALUE self)
 {
     VALUE rbMetrics = rb_ary_new();
+    VALUE rbMetricsInner = rb_ary_new();
     struct CMetricsSerde* cmetricsSerde;
     struct mk_list *head;
     struct cmt_gauge *gauge;
@@ -369,19 +370,22 @@ rb_cmetrics_serde_get_metrics(VALUE self)
     /* Counters */
     mk_list_foreach(head, &cmt->counters) {
         counter = mk_list_entry(head, struct cmt_counter, _head);
-        rbMetrics = format_metrics(cmt, counter->map, add_timestamp);
+        rbMetricsInner = format_metrics(cmt, counter->map, add_timestamp);
+        rb_ary_push(rbMetrics, rbMetricsInner);
     }
 
     /* Gauges */
     mk_list_foreach(head, &cmt->gauges) {
         gauge = mk_list_entry(head, struct cmt_gauge, _head);
-        rbMetrics = format_metrics(cmt, gauge->map, add_timestamp);
+        rbMetricsInner = format_metrics(cmt, gauge->map, add_timestamp);
+        rb_ary_push(rbMetrics, rbMetricsInner);
     }
 
     /* Untyped */
     mk_list_foreach(head, &cmt->untypeds) {
         untyped = mk_list_entry(head, struct cmt_untyped, _head);
-        rbMetrics = format_metrics(cmt, untyped->map, add_timestamp);
+        rbMetricsInner = format_metrics(cmt, untyped->map, add_timestamp);
+        rb_ary_push(rbMetrics, rbMetricsInner);
     }
 
     return rbMetrics;
@@ -402,5 +406,4 @@ void Init_cmetrics_serde(VALUE rb_mCMetrics)
     rb_define_method(rb_cSerde, "to_s", rb_cmetrics_serde_to_text, 0);
     rb_define_method(rb_cSerde, "get_metrics", rb_cmetrics_serde_get_metrics, 0);
     rb_define_method(rb_cSerde, "metrics", rb_cmetrics_serde_get_metrics, 0);
-    rb_define_method(rb_cSerde, "to_h", rb_cmetrics_serde_get_metrics, 0);
 }
