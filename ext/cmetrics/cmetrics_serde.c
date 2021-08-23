@@ -160,8 +160,11 @@ static VALUE
 rb_cmetrics_serde_from_msgpack_feed_each(VALUE self, VALUE rb_data)
 {
     RETURN_ENUMERATOR(self, 0, 0);
-
-    return rb_cmetrics_serde_from_msgpack_feed_each_impl(self, rb_data, RSTRING_LEN(rb_data));
+    if (!NIL_P(rb_data)) {
+        return rb_cmetrics_serde_from_msgpack_feed_each_impl(self, rb_data, RSTRING_LEN(rb_data));
+    } else {
+        rb_raise(rb_eArgError, "nil is not valid value for buffer");
+    }
 }
 
 static VALUE
