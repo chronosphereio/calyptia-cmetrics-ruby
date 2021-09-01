@@ -30,5 +30,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake-compiler", "~> 1.0"
   spec.add_development_dependency "rake-compiler-dock", "~> 1.0"
 
-  spec.add_dependency 'mini_portile2', '~> 2.1'
+  spec.add_dependency 'mini_portile2', '~> 2.7'
 end
