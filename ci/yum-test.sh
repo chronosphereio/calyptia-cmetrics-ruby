@@ -70,5 +70,8 @@ if [ $USE_SCL -eq 1 ]; then
     export MANPATH=
     cd /cmetrics-ruby && source /opt/rh/rh-ruby26/enable && gem install bundler --no-document && bundle install && bundle exec rake
 else
+    if [ $USE_AMZN_EXT -eq 1 ]; then
+        echo 'gem "io-console"' > /cmetrics-ruby/Gemfile.local
+    fi
     cd /cmetrics-ruby && gem install bundler --no-document && bundle install && bundle exec rake
 fi
