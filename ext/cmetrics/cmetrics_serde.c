@@ -135,13 +135,14 @@ rb_cmetrics_serde_from_msgpack_feed_each_impl(VALUE self, VALUE rb_msgpack_buffe
     struct CMetricsSerde* cmetricsSerde;
     struct cmt *cmt = NULL;
     int ret = 0;
+    size_t offset = 0;
 
     RETURN_ENUMERATOR(self, 0, 0);
 
     TypedData_Get_Struct(
             self, struct CMetricsSerde, &rb_cmetrics_serde_type, cmetricsSerde);
 
-    for (size_t offset = 0; offset <= msgpack_length; ) {
+    for (offset = 0; offset <= msgpack_length; ) {
         ret = cmt_decode_msgpack_create(&cmt, StringValuePtr(rb_msgpack_buffer), msgpack_length, &offset);
         if (ret == 0) {
             cmetricsSerde->instance = cmt;
