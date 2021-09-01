@@ -13,17 +13,35 @@ def windows?
   RUBY_PLATFORM =~ /mingw|mswin/
 end
 
+def determine_preferred_command(bin, default_bin)
+  printf "checking for whether %s or %s is usable... ", bin, default_bin
+  STDOUT.flush
+  bin += RbConfig::CONFIG['EXEEXT']
+  path = ENV['PATH'].split(RbConfig::CONFIG['PATH_SEPARATOR'])
+  for dir in path
+    file = File.join(dir, bin)
+    if FileTest.executable?(file)
+      printf "%s\n", bin
+      return bin
+    else
+      next
+    end
+  end
+  printf "%s\n", default_bin
+  return default_bin
+end
+
 class BuildCMetrics
 
   attr_reader :recipe
 
-  def initialize(version=nil)
+  def initialize(version=nil, **kwargs)
     @version = if version
                 version
               else
                 "master".freeze
               end
-    @recipe = MiniPortileCMake.new("cmetrics", @version)
+    @recipe = MiniPortileCMake.new("cmetrics", @version, **kwargs)
     @checkpoint = ".#{@recipe.name}-#{@recipe.version}.installed"
     @recipe.target = File.join(ROOT, "ports")
     @recipe.files << {
@@ -52,7 +70,7 @@ class BuildCMetrics
   end
 end
 
-cmetrics = BuildCMetrics.new("0.2.1")
+cmetrics = BuildCMetrics.new("0.2.1", cmake_command: determine_preferred_command("cmake3", "cmake"))
 cmetrics.build
 
 libdir = RbConfig::CONFIG["libdir"]
