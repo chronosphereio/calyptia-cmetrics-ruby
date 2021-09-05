@@ -10,9 +10,9 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.0.1
+        ruby-version: '3.0'
     - name: Run the default task
       run: |
-        gem install bundler -v 2.2.15
+        gem install bundler -v 2.2.26
         ridk exec bundle install
         ridk exec bundle exec rake
