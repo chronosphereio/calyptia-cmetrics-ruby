@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "msgpack"
 
 class CMetricsSerdeTest < Test::Unit::TestCase
   sub_test_case "Serde" do
@@ -109,6 +110,103 @@ EOC
         ]
         assert_equal([[Float], [Float]], @serde.metrics.first.map{|e| e.select{|k| k == "timestamp"}.values.map{|e| e.class}})
         assert_equal(expected, @serde.metrics.first.map{|e| e.reject!{|k| k == "timestamp"}})
+      end
+    end
+
+    sub_test_case "concat objects and decode msgpack in a bundle" do
+      setup do
+        @counter = CMetrics::Counter.new
+        @counter.create("test", "concat", "counter", "Dest counter data")
+        @counter.set(1)
+        @buffer = @counter.to_msgpack
+      end
+
+      data(
+        counter: ["counter", CMetrics::Counter.new],
+        gauge: ["gauge", CMetrics::Counter.new],
+        untyped: ["untyped", CMetrics::Untyped.new]
+      )
+      test "concatenate cmetric object" do |(label, obj)|
+        assert_true @serde.from_msgpack(@buffer)
+
+        obj.create("test", "concat", label, "Source #{label} data")
+        obj.set(10)
+        @serde.concat(obj)
+
+        unpacked = MessagePack.unpack(@serde.to_msgpack)
+        assert_equal([
+                       2,
+                       {"ns"=>"test", "ss"=>"concat", "name"=>"counter", "desc"=>"Dest counter data"},
+                       {"ns"=>"test", "ss"=>"concat", "name"=>label, "desc"=>"Source #{label} data"},
+                       1.0,
+                       10.0
+                     ],
+                     [
+                       unpacked.size,
+                       unpacked.first["meta"]["opts"],
+                       unpacked.last["meta"]["opts"],
+                       unpacked.first["values"].last["value"],
+                       unpacked.last["values"].last["value"]
+                     ])
+      end
+
+      data(
+        counter: ["counter", CMetrics::Counter.new],
+        gauge: ["gauge", CMetrics::Counter.new],
+        untyped: ["untyped", CMetrics::Untyped.new]
+      )
+      test "concatenate cmetric object without from_msgpack first" do |(label, obj)|
+        obj.create("test", "concat", label, "Source #{label} data")
+        obj.set(10)
+        @serde.concat(obj)
+        unpacked = MessagePack.unpack(@serde.to_msgpack)
+        assert_equal([
+                       1,
+                       {"ns"=>"test", "ss"=>"concat", "name"=>label, "desc"=>"Source #{label} data"},
+                       10.0
+                     ],
+                     [
+                       unpacked.size,
+                       unpacked.first["meta"]["opts"],
+                       unpacked.first["values"].last["value"],
+                     ])
+      end
+
+      test "concatenate many cmetric objects" do
+        10.times do |i|
+          @counter = CMetrics::Counter.new
+          @counter.create("test", "concat", "counter", "Source #{i} data")
+          @counter.set(i)
+          @serde.concat(@counter)
+        end
+        unpacked = MessagePack.unpack(@serde.to_msgpack)
+        opts = unpacked.collect do |obj|
+          obj["meta"]["opts"]
+        end
+        values = unpacked.collect do |obj|
+          obj["values"].first["value"]
+        end
+        assert_equal([
+                       10,
+                       [
+                         {"ns"=>"test", "ss"=>"concat", "name"=>"counter", "desc"=>"Source 0 data"},
+                         {"ns"=>"test", "ss"=>"concat", "name"=>"counter", "desc"=>"Source 1 data"},
+                         {"ns"=>"test", "ss"=>"concat", "name"=>"counter", "desc"=>"Source 2 data"},
+                         {"ns"=>"test", "ss"=>"concat", "name"=>"counter", "desc"=>"Source 3 data"},
+                         {"ns"=>"test", "ss"=>"concat", "name"=>"counter", "desc"=>"Source 4 data"},
+                         {"ns"=>"test", "ss"=>"concat", "name"=>"counter", "desc"=>"Source 5 data"},
+                         {"ns"=>"test", "ss"=>"concat", "name"=>"counter", "desc"=>"Source 6 data"},
+                         {"ns"=>"test", "ss"=>"concat", "name"=>"counter", "desc"=>"Source 7 data"},
+                         {"ns"=>"test", "ss"=>"concat", "name"=>"counter", "desc"=>"Source 8 data"},
+                         {"ns"=>"test", "ss"=>"concat", "name"=>"counter", "desc"=>"Source 9 data"},
+                       ],
+                       [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+                     ],
+                     [
+                       unpacked.size,
+                       opts,
+                       values
+                     ])
       end
     end
 

@@ -65,5 +65,8 @@ void Init_cmetrics_counter(VALUE rb_mCMetrics);
 void Init_cmetrics_gauge(VALUE rb_mCMetrics);
 void Init_cmetrics_serde(VALUE rb_mCMetrics);
 void Init_cmetrics_untyped(VALUE rb_mCMetrics);
+const struct CMetricsCounter *cmetrics_counter_get_ptr(VALUE rb_mCMetrics);
+const struct CMetricsGauge *cmetrics_gauge_get_ptr(VALUE rb_mCMetrics);
+const struct CMetricsUntyped *cmetrics_untyped_get_ptr(VALUE rb_mCMetrics);
 
 #endif // _CMETRICS_C_H

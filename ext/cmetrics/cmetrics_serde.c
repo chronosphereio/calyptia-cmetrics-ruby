@@ -20,8 +20,13 @@
 #include "cmetrics_c.h"
 #include <cmetrics/cmt_map.h>
 #include <cmetrics/cmt_metric.h>
+#include <cmetrics/cmt_cat.h>
 
 VALUE rb_cSerde;
+
+extern VALUE rb_cCounter;
+extern VALUE rb_cGauge;
+extern VALUE rb_cUntyped;
 
 static void serde_free(void* ptr);
 
@@ -165,6 +170,53 @@ rb_cmetrics_serde_from_msgpack_feed_each(VALUE self, VALUE rb_data)
         return rb_cmetrics_serde_from_msgpack_feed_each_impl(self, rb_data, RSTRING_LEN(rb_data));
     } else {
         rb_raise(rb_eArgError, "nil is not valid value for buffer");
+    }
+}
+
+static VALUE
+rb_cmetrics_serde_concat_metric(VALUE self, VALUE rb_data)
+{
+    struct CMetricsSerde* cmetricsSerde = NULL;
+    struct CMetricsCounter* cmetricsCounter = NULL;
+    struct CMetricsGauge* cmetricsGauge = NULL;
+    struct CMetricsUntyped* cmetricsUntyped = NULL;
+    struct cmt *cmt = NULL;
+    VALUE rb_cmetrics_counter_type;
+    VALUE rb_msgpack_buffer;
+    VALUE rb_msgpack_size;
+    int ret = 0;
+    size_t offset = 0;
+
+    TypedData_Get_Struct(
+            self, struct CMetricsSerde, &rb_cmetrics_serde_type, cmetricsSerde);
+
+    if (!NIL_P(rb_data)) {
+        if (cmetricsSerde->instance == NULL) {
+            rb_msgpack_buffer = rb_funcall(rb_data, rb_intern("to_msgpack"), 0, 0);
+            rb_msgpack_size = rb_funcall(rb_msgpack_buffer, rb_intern("size"), 0, 0);
+            ret = cmt_decode_msgpack_create(&cmt, StringValuePtr(rb_msgpack_buffer), NUM2INT(rb_msgpack_size), &offset);
+            if (ret == 0) {
+                cmetricsSerde->instance = cmt;
+                cmetricsSerde->unpack_msgpack_offset = offset;
+            } else {
+                rb_raise(rb_eRuntimeError, "failed to store given argument into msgpack.");
+            }
+        } else {
+            if (rb_obj_is_kind_of(rb_data, rb_cCounter)) {
+                cmetricsCounter = (struct CMetricsCounter *)cmetrics_counter_get_ptr(rb_data);
+                cmt_cat(cmetricsSerde->instance, cmetricsCounter->instance);
+            } else if (rb_obj_is_kind_of(rb_data, rb_cGauge)) {
+                cmetricsGauge = (struct CMetricsGauge *)cmetrics_gauge_get_ptr(rb_data);
+                cmt_cat(cmetricsSerde->instance, cmetricsGauge->instance);
+            } else if (rb_obj_is_kind_of(rb_data, rb_cUntyped)) {
+                cmetricsUntyped = (struct CMetricsUntyped *)cmetrics_untyped_get_ptr(rb_data);
+                cmt_cat(cmetricsSerde->instance, cmetricsUntyped->instance);
+            } else {
+                rb_raise(rb_eArgError, "specified type of instance is not supported.");
+            }
+        }
+    } else {
+        rb_raise(rb_eArgError, "nil is not valid value for concatenating");
     }
 }
 
@@ -399,6 +451,7 @@ void Init_cmetrics_serde(VALUE rb_mCMetrics)
     rb_define_alloc_func(rb_cSerde, rb_cmetrics_serde_alloc);
 
     rb_define_method(rb_cSerde, "initialize", rb_cmetrics_serde_initialize, 0);
+    rb_define_method(rb_cSerde, "concat", rb_cmetrics_serde_concat_metric, 1);
     rb_define_method(rb_cSerde, "from_msgpack", rb_cmetrics_serde_from_msgpack, -1);
     rb_define_method(rb_cSerde, "to_prometheus", rb_cmetrics_serde_to_prometheus, 0);
     rb_define_method(rb_cSerde, "to_influx", rb_cmetrics_serde_to_influx, 0);
