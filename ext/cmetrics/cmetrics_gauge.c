@@ -34,6 +34,22 @@ static const rb_data_type_t rb_cmetrics_gauge_type = { "cmetrics/gauge",
                                                        RUBY_TYPED_FREE_IMMEDIATELY };
 
 
+const struct CMetricsGauge *cmetrics_gauge_get_ptr(VALUE self)
+{
+    struct CMetricsGauge *cmetricsGauge = NULL;
+
+    TypedData_Get_Struct(
+            self, struct CMetricsGauge, &rb_cmetrics_gauge_type, cmetricsGauge);
+
+    if (NIL_P(self)) {
+        rb_raise(rb_eRuntimeError, "Given CMetrics argument must not be nil");
+    }
+    if (!cmetricsGauge->gauge) {
+        rb_raise(rb_eRuntimeError, "Create gauge with CMetrics::Gauge#create first.");
+    }
+    return cmetricsGauge;
+}
+
 static void
 gauge_free(void* ptr)
 {

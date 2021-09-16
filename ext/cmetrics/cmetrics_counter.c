@@ -34,6 +34,22 @@ static const rb_data_type_t rb_cmetrics_counter_type = { "cmetrics/counter",
                                                          RUBY_TYPED_FREE_IMMEDIATELY };
 
 
+const struct CMetricsCounter *cmetrics_counter_get_ptr(VALUE self)
+{
+    struct CMetricsCounter *cmetricsCounter = NULL;
+
+    TypedData_Get_Struct(
+            self, struct CMetricsCounter, &rb_cmetrics_counter_type, cmetricsCounter);
+
+    if (NIL_P(self)) {
+        rb_raise(rb_eRuntimeError, "Given CMetrics argument must not be nil");
+    }
+    if (!cmetricsCounter->counter) {
+        rb_raise(rb_eRuntimeError, "Create counter with CMetrics::Counter#create first.");
+    }
+    return cmetricsCounter;
+}
+
 static void
 counter_free(void* ptr)
 {

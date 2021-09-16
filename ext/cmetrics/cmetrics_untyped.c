@@ -34,6 +34,22 @@ static const rb_data_type_t rb_cmetrics_untyped_type = { "cmetrics/untyped",
                                                          RUBY_TYPED_FREE_IMMEDIATELY };
 
 
+const struct CMetricsUntyped *cmetrics_untyped_get_ptr(VALUE self)
+{
+    struct CMetricsUntyped *cmetricsUntyped = NULL;
+
+    TypedData_Get_Struct(
+            self, struct CMetricsUntyped, &rb_cmetrics_untyped_type, cmetricsUntyped);
+
+    if (NIL_P(self)) {
+        rb_raise(rb_eRuntimeError, "Given CMetrics argument must not be nil");
+    }
+    if (!cmetricsUntyped->untyped) {
+        rb_raise(rb_eRuntimeError, "Create untyped with CMetrics::Untyped#create first.");
+    }
+    return cmetricsUntyped;
+}
+
 static void
 untyped_free(void* ptr)
 {
