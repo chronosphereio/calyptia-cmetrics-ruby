@@ -180,40 +180,26 @@ rb_cmetrics_serde_concat_metric(VALUE self, VALUE rb_data)
     struct CMetricsCounter* cmetricsCounter = NULL;
     struct CMetricsGauge* cmetricsGauge = NULL;
     struct CMetricsUntyped* cmetricsUntyped = NULL;
-    struct cmt *cmt = NULL;
-    VALUE rb_cmetrics_counter_type;
-    VALUE rb_msgpack_buffer;
-    VALUE rb_msgpack_size;
-    int ret = 0;
-    size_t offset = 0;
 
     TypedData_Get_Struct(
             self, struct CMetricsSerde, &rb_cmetrics_serde_type, cmetricsSerde);
 
     if (!NIL_P(rb_data)) {
         if (cmetricsSerde->instance == NULL) {
-            rb_msgpack_buffer = rb_funcall(rb_data, rb_intern("to_msgpack"), 0, 0);
-            rb_msgpack_size = rb_funcall(rb_msgpack_buffer, rb_intern("size"), 0, 0);
-            ret = cmt_decode_msgpack_create(&cmt, StringValuePtr(rb_msgpack_buffer), NUM2INT(rb_msgpack_size), &offset);
-            if (ret == 0) {
-                cmetricsSerde->instance = cmt;
-                cmetricsSerde->unpack_msgpack_offset = offset;
-            } else {
-                rb_raise(rb_eRuntimeError, "failed to store given argument into msgpack.");
-            }
+            cmetricsSerde->instance = cmt_create();
+        }
+
+        if (rb_obj_is_kind_of(rb_data, rb_cCounter)) {
+            cmetricsCounter = (struct CMetricsCounter *)cmetrics_counter_get_ptr(rb_data);
+            cmt_cat(cmetricsSerde->instance, cmetricsCounter->instance);
+        } else if (rb_obj_is_kind_of(rb_data, rb_cGauge)) {
+            cmetricsGauge = (struct CMetricsGauge *)cmetrics_gauge_get_ptr(rb_data);
+            cmt_cat(cmetricsSerde->instance, cmetricsGauge->instance);
+        } else if (rb_obj_is_kind_of(rb_data, rb_cUntyped)) {
+            cmetricsUntyped = (struct CMetricsUntyped *)cmetrics_untyped_get_ptr(rb_data);
+            cmt_cat(cmetricsSerde->instance, cmetricsUntyped->instance);
         } else {
-            if (rb_obj_is_kind_of(rb_data, rb_cCounter)) {
-                cmetricsCounter = (struct CMetricsCounter *)cmetrics_counter_get_ptr(rb_data);
-                cmt_cat(cmetricsSerde->instance, cmetricsCounter->instance);
-            } else if (rb_obj_is_kind_of(rb_data, rb_cGauge)) {
-                cmetricsGauge = (struct CMetricsGauge *)cmetrics_gauge_get_ptr(rb_data);
-                cmt_cat(cmetricsSerde->instance, cmetricsGauge->instance);
-            } else if (rb_obj_is_kind_of(rb_data, rb_cUntyped)) {
-                cmetricsUntyped = (struct CMetricsUntyped *)cmetrics_untyped_get_ptr(rb_data);
-                cmt_cat(cmetricsSerde->instance, cmetricsUntyped->instance);
-            } else {
-                rb_raise(rb_eArgError, "specified type of instance is not supported.");
-            }
+            rb_raise(rb_eArgError, "specified type of instance is not supported.");
         }
     } else {
         rb_raise(rb_eArgError, "nil is not valid value for concatenating");
