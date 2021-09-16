@@ -218,6 +218,10 @@ rb_cmetrics_serde_to_prometheus(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsSerde, &rb_cmetrics_serde_type, cmetricsSerde);
 
+    if (cmetricsSerde->instance == NULL) {
+        rb_raise(rb_eRuntimeError, "Invalid cmt context");
+    }
+
     prom = cmt_encode_prometheus_create(cmetricsSerde->instance, CMT_TRUE);
 
     str = rb_str_new2(prom);
@@ -236,6 +240,10 @@ rb_cmetrics_serde_to_influx(VALUE self)
 
     TypedData_Get_Struct(
             self, struct CMetricsSerde, &rb_cmetrics_serde_type, cmetricsSerde);
+
+    if (cmetricsSerde->instance == NULL) {
+        rb_raise(rb_eRuntimeError, "Invalid cmt context");
+    }
 
     prom = cmt_encode_influx_create(cmetricsSerde->instance);
 
@@ -256,6 +264,10 @@ rb_cmetrics_serde_to_msgpack(VALUE self)
     TypedData_Get_Struct(
             self, struct CMetricsSerde, &rb_cmetrics_serde_type, cmetricsSerde);
 
+    if (cmetricsSerde->instance == NULL) {
+        rb_raise(rb_eRuntimeError, "Invalid cmt context");
+    }
+
     ret = cmt_encode_msgpack_create(cmetricsSerde->instance, &buffer, &buffer_size);
 
     if (ret == 0) {
@@ -274,6 +286,10 @@ rb_cmetrics_serde_to_text(VALUE self)
 
     TypedData_Get_Struct(
             self, struct CMetricsSerde, &rb_cmetrics_serde_type, cmetricsSerde);
+
+    if (cmetricsSerde->instance == NULL) {
+        rb_raise(rb_eRuntimeError, "Invalid cmt context");
+    }
 
     buffer = cmt_encode_text_create(cmetricsSerde->instance);
     if (buffer == NULL) {
