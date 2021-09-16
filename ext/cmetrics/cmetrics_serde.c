@@ -204,6 +204,8 @@ rb_cmetrics_serde_concat_metric(VALUE self, VALUE rb_data)
     } else {
         rb_raise(rb_eArgError, "nil is not valid value for concatenating");
     }
+
+    return Qnil;
 }
 
 static VALUE
