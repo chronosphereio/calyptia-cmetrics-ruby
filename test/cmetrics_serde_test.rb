@@ -9,6 +9,36 @@ class CMetricsSerdeTest < Test::Unit::TestCase
       @serde = CMetrics::Serde.new
     end
 
+    sub_test_case "uninitialized cmt contexts" do
+      setup do
+        @serde = CMetrics::Serde.new
+      end
+
+      test "to_prometheus" do
+        assert_raise(RuntimeError) do
+          @serde.to_prometheus
+        end
+      end
+
+      test "to_msgpack" do
+        assert_raise(RuntimeError) do
+          @serde.to_msgpack
+        end
+      end
+
+      test "to_influx" do
+        assert_raise(RuntimeError) do
+          @serde.to_influx
+        end
+      end
+
+      test "to_s" do
+        assert_raise(RuntimeError) do
+          @serde.to_s
+        end
+      end
+    end
+
     sub_test_case "w/ counter" do
       setup do
         @counter = CMetrics::Counter.new
