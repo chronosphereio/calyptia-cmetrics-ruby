@@ -55,11 +55,11 @@ counter_free(void* ptr)
 {
     struct CMetricsCounter* cmetricsCounter = (struct CMetricsCounter*)ptr;
 
-    if (!cmetricsCounter) {
-        if (!cmetricsCounter->counter) {
+    if (cmetricsCounter) {
+        if (cmetricsCounter->counter) {
             cmt_counter_destroy(cmetricsCounter->counter);
         }
-        if (!cmetricsCounter->instance) {
+        if (cmetricsCounter->instance) {
             cmt_destroy(cmetricsCounter->instance);
         }
     }

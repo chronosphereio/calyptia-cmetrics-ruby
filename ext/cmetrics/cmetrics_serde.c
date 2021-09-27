@@ -46,8 +46,8 @@ serde_free(void* ptr)
 {
     struct CMetricsSerde* cmetricsSerde = (struct CMetricsSerde*)ptr;
 
-    if (!cmetricsSerde) {
-        if (!cmetricsSerde->instance) {
+    if (cmetricsSerde) {
+        if (cmetricsSerde->instance) {
             cmt_destroy(cmetricsSerde->instance);
         }
     }
