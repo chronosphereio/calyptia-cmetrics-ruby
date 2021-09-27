@@ -55,11 +55,11 @@ untyped_free(void* ptr)
 {
     struct CMetricsUntyped* cmetricsUntyped = (struct CMetricsUntyped*)ptr;
 
-    if (!cmetricsUntyped) {
-        if (!cmetricsUntyped->untyped) {
+    if (cmetricsUntyped) {
+        if (cmetricsUntyped->untyped) {
             cmt_untyped_destroy(cmetricsUntyped->untyped);
         }
-        if (!cmetricsUntyped->instance) {
+        if (cmetricsUntyped->instance) {
             cmt_destroy(cmetricsUntyped->instance);
         }
     }
