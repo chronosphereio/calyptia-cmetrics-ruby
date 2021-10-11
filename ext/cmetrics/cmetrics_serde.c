@@ -103,7 +103,7 @@ rb_cmetrics_serde_from_msgpack(int argc, VALUE *argv, VALUE self)
     rb_scan_args(argc, argv, "12", &rb_msgpack_buffer, &rb_msgpack_length, &rb_offset);
     if (!NIL_P(rb_msgpack_length)) {
         Check_Type(rb_msgpack_length, T_FIXNUM);
-        msgpack_length = INT2NUM(rb_msgpack_length);
+        msgpack_length = ULONG2NUM(rb_msgpack_length);
     } else {
         msgpack_length = RSTRING_LEN(rb_msgpack_buffer);
     }
