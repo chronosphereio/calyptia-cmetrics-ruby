@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "test_helper"
 require "msgpack"
 
@@ -37,6 +35,12 @@ class CMetricsSerdeTest < Test::Unit::TestCase
           @serde.to_s
         end
       end
+
+      test "prometheus_remote_write" do
+        assert_raise(RuntimeError) do
+          @serde.prometheus_remote_write
+        end
+      end
     end
 
     sub_test_case "w/ counter" do
@@ -53,6 +57,11 @@ class CMetricsSerdeTest < Test::Unit::TestCase
         assert_true @serde.from_msgpack(@buffer)
         buffer = @serde.to_msgpack
         assert_equal buffer.size, @buffer.size
+      end
+
+      test "prometheus_remote_write" do
+        assert_true @serde.from_msgpack(@buffer)
+        assert_not_nil @serde.prometheus_remote_write
       end
 
       test "encode text" do
@@ -105,6 +114,11 @@ EOC
         assert_true @serde.from_msgpack(@buffer)
         buffer = @serde.to_msgpack
         assert_equal buffer.size, @buffer.size
+      end
+
+      test "prometheus_remote_write" do
+        assert_true @serde.from_msgpack(@buffer)
+        assert_not_nil @serde.prometheus_remote_write
       end
 
       test "encode text" do
@@ -282,6 +296,16 @@ EOC
           # Trying to decode from the next offset.
           assert_true @serde.from_msgpack(@wired_buffer)
           assert_equal @counter.to_influx, @serde.to_influx
+        end
+      end
+
+      sub_test_case "decode and encode as prometheus remote write" do
+        test "prometheus remote with multiple cmetrics objects" do
+          encoded_buffer = ""
+          @serde.feed_each(@wired_buffer) do |serde|
+            encoded_buffer << serde.prometheus_remote_write
+          end
+          assert_not_nil encoded_buffer
         end
       end
 
