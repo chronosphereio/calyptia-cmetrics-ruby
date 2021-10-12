@@ -21,6 +21,7 @@
 #include <cmetrics/cmt_map.h>
 #include <cmetrics/cmt_metric.h>
 #include <cmetrics/cmt_cat.h>
+#include <cmetrics/cmt_encode_prometheus_remote_write.h>
 
 VALUE rb_cSerde;
 
@@ -206,6 +207,29 @@ rb_cmetrics_serde_concat_metric(VALUE self, VALUE rb_data)
     }
 
     return Qnil;
+}
+
+static VALUE
+rb_metrics_serde_prometheus_remote_write(VALUE self)
+{
+    struct CMetricsSerde* cmetricsSerde;
+    cmt_sds_t prom;
+    VALUE str;
+
+    TypedData_Get_Struct(
+            self, struct CMetricsSerde, &rb_cmetrics_serde_type, cmetricsSerde);
+
+    if (cmetricsSerde->instance == NULL) {
+        rb_raise(rb_eRuntimeError, "Invalid cmt context");
+    }
+
+    prom = cmt_encode_prometheus_remote_write_create(cmetricsSerde->instance);
+
+    str = rb_str_new2(prom);
+
+    cmt_encode_prometheus_remote_write_destroy(prom);
+
+    return str;
 }
 
 static VALUE
@@ -457,6 +481,7 @@ void Init_cmetrics_serde(VALUE rb_mCMetrics)
     rb_define_method(rb_cSerde, "initialize", rb_cmetrics_serde_initialize, 0);
     rb_define_method(rb_cSerde, "concat", rb_cmetrics_serde_concat_metric, 1);
     rb_define_method(rb_cSerde, "from_msgpack", rb_cmetrics_serde_from_msgpack, -1);
+    rb_define_method(rb_cSerde, "prometheus_remote_write", rb_metrics_serde_prometheus_remote_write, 0);
     rb_define_method(rb_cSerde, "to_prometheus", rb_cmetrics_serde_to_prometheus, 0);
     rb_define_method(rb_cSerde, "to_influx", rb_cmetrics_serde_to_influx, 0);
     rb_define_method(rb_cSerde, "to_msgpack", rb_cmetrics_serde_to_msgpack, 0);
