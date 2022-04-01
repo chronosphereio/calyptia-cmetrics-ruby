@@ -30,6 +30,16 @@ case ${distribution} in
         ;;
     esac
     ;;
+  rocky)
+    case ${version} in
+      8)
+        DNF="dnf --enablerepo=powertools"
+        ;;
+      *)
+        DNF="dnf --enablerepo=powertools"
+        ;;
+    esac
+    ;;
   fedoraproject)
     case ${version} in
       33|34)
