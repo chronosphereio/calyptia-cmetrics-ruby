@@ -91,6 +91,8 @@ EOC
 
       test "decode as Hash" do
         assert_true @serde.from_msgpack(@buffer)
+        p MessagePack.unpack(@buffer)
+        p MessagePack.unpack(@serde.to_msgpack)
         expected = [
           {"namespace"=>"kubernetes", "subsystem"=>"network", "name"=>"load", "description"=>"Network load", "value"=>1.0},
           {"namespace"=>"kubernetes", "subsystem"=>"network", "labels"=>{"hostname"=>"calyptia.com", "app"=>"cmetrics"}, "name"=>"load", "description"=>"Network load", "value"=>2.0}

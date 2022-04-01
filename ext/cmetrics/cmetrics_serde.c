@@ -447,10 +447,16 @@ rb_cmetrics_serde_get_metrics(VALUE self)
     if (cmt == NULL) {
         rb_raise(rb_eRuntimeError, "Invalid cmt context");
     }
+    printf("line: %d Hi!!!!!\n", __LINE__);
+    printf("size counters %d\n", mk_list_size(&cmt->counters));
+    printf("size gauges %d\n", mk_list_size(&cmt->gauges));
+    printf("size untypeds %d\n", mk_list_size(&cmt->untypeds));
 
     /* Counters */
     mk_list_foreach(head, &cmt->counters) {
         counter = mk_list_entry(head, struct cmt_counter, _head);
+        printf("line: %d Hi!!!!!\n", __LINE__);
+        printf("line: %d address: %p\n", __LINE__, counter);
         rbMetricsInner = format_metrics(cmt, counter->map, add_timestamp);
         rb_ary_push(rbMetrics, rbMetricsInner);
     }
@@ -458,6 +464,8 @@ rb_cmetrics_serde_get_metrics(VALUE self)
     /* Gauges */
     mk_list_foreach(head, &cmt->gauges) {
         gauge = mk_list_entry(head, struct cmt_gauge, _head);
+        printf("line: %d Hi!!!!!\n", __LINE__);
+        printf("line: %d address: %p\n", __LINE__, gauge);
         rbMetricsInner = format_metrics(cmt, gauge->map, add_timestamp);
         rb_ary_push(rbMetrics, rbMetricsInner);
     }
@@ -465,6 +473,8 @@ rb_cmetrics_serde_get_metrics(VALUE self)
     /* Untyped */
     mk_list_foreach(head, &cmt->untypeds) {
         untyped = mk_list_entry(head, struct cmt_untyped, _head);
+        printf("line: %d Hi!!!!!\n", __LINE__);
+        printf("line: %d address: %p\n", __LINE__, untyped);
         rbMetricsInner = format_metrics(cmt, untyped->map, add_timestamp);
         rb_ary_push(rbMetrics, rbMetricsInner);
     }
