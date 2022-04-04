@@ -98,6 +98,32 @@ EOC
         assert_equal([[Float], [Float]], @serde.metrics.first.map{|e| e.select{|k| k == "timestamp"}.values.map{|e| e.class}})
         assert_equal(expected, @serde.metrics.first.map{|e| e.reject!{|k| k == "timestamp"}})
       end
+
+      sub_test_case "w/ static labels" do
+        setup do
+          @counter = CMetrics::Counter.new
+          @counter.create("kubernetes", "network", "load", "Network load", ["hostname", "app"])
+          @counter.inc
+          @counter.inc(["calyptia.com", "cmetrics"])
+          @counter.inc(["calyptia.com", "cmetrics"])
+          @counter.add_label("dev", "Calyptia")
+          @counter.add_label("lang", "Ruby")
+          @buffer = @counter.to_msgpack
+        end
+
+        test "decode as Hash" do
+          assert_true @serde.from_msgpack(@buffer)
+          expected = [
+            {"namespace"=>"kubernetes", "subsystem"=>"network", "name"=>"load",
+             "static_labels"=>{"dev"=>"Calyptia", "lang"=>"Ruby"}, "description"=>"Network load", "value"=>1.0},
+            {"namespace"=>"kubernetes", "subsystem"=>"network", "labels"=>{"hostname"=>"calyptia.com", "app"=>"cmetrics"},
+             "static_labels"=>{"dev"=>"Calyptia", "lang"=>"Ruby"},
+             "name"=>"load", "description"=>"Network load", "value"=>2.0}
+          ]
+          assert_equal([[Float], [Float]], @serde.metrics.first.map{|e| e.select{|k| k == "timestamp"}.values.map{|e| e.class}})
+          assert_equal(expected, @serde.metrics.first.map{|e| e.reject!{|k| k == "timestamp"}})
+        end
+      end
     end
 
     sub_test_case "w/ gauge" do
@@ -154,6 +180,32 @@ EOC
         ]
         assert_equal([[Float], [Float]], @serde.metrics.first.map{|e| e.select{|k| k == "timestamp"}.values.map{|e| e.class}})
         assert_equal(expected, @serde.metrics.first.map{|e| e.reject!{|k| k == "timestamp"}})
+      end
+
+      sub_test_case "w/ static labels" do
+        setup do
+          @gauge = CMetrics::Gauge.new
+          @gauge.create("kubernetes", "network", "load", "Network load", ["hostname", "app"])
+          @gauge.inc
+          @gauge.inc(["calyptia.com", "cmetrics"])
+          @gauge.inc(["calyptia.com", "cmetrics"])
+          @gauge.add_label("dev", "Calyptia")
+          @gauge.add_label("lang", "Ruby")
+          @buffer = @gauge.to_msgpack
+        end
+
+        test "decode as Hash" do
+          assert_true @serde.from_msgpack(@buffer)
+          expected = [
+            {"namespace"=>"kubernetes", "subsystem"=>"network", "name"=>"load",
+             "static_labels"=>{"dev"=>"Calyptia", "lang"=>"Ruby"}, "description"=>"Network load", "value"=>1.0},
+            {"namespace"=>"kubernetes", "subsystem"=>"network", "labels"=>{"hostname"=>"calyptia.com", "app"=>"cmetrics"},
+             "static_labels"=>{"dev"=>"Calyptia", "lang"=>"Ruby"},
+             "name"=>"load", "description"=>"Network load", "value"=>2.0}
+          ]
+          assert_equal([[Float], [Float]], @serde.metrics.first.map{|e| e.select{|k| k == "timestamp"}.values.map{|e| e.class}})
+          assert_equal(expected, @serde.metrics.first.map{|e| e.reject!{|k| k == "timestamp"}})
+        end
       end
     end
 
