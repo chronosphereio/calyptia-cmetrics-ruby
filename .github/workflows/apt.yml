@@ -13,6 +13,7 @@ jobs:
           - Debian GNU/Linux Buster amd64
           - Ubuntu Bionic amd64
           - Ubuntu Focal amd64
+          - Ubuntu Jammy amd64
         include:
           - label: Debian GNU/Linux Bullseye amd64
             test-docker-image: debian:bullseye
@@ -25,6 +26,9 @@ jobs:
             test-script: ci/apt-test.sh
           - label: Ubuntu Focal amd64
             test-docker-image: ubuntu:focal
+            test-script: ci/apt-test.sh
+          - label: Ubuntu Jammy amd64
+            test-docker-image: ubuntu:jammy
             test-script: ci/apt-test.sh
     runs-on: ubuntu-latest
     steps:
