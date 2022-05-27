@@ -46,7 +46,7 @@ class BuildCMetrics
     @recipe.target = File.join(ROOT, "ports")
     @recipe.files << {
       url: "https://codeload.github.com/calyptia/cmetrics/tar.gz/v#{version}",
-      sha256sum: "c0b239fad559852c0c088879697c26e00ba243cfb1c4b8bca6246d1f50932842e",
+      sha256sum: "9f0bdc64268ddaa0906ebd8ae4e5cb396f9730695e5697514fc3a5287fe41826",
     }
   end
 
@@ -70,7 +70,7 @@ class BuildCMetrics
   end
 end
 
-cmetrics = BuildCMetrics.new("0.3.0", cmake_command: determine_preferred_command("cmake3", "cmake"))
+cmetrics = BuildCMetrics.new("0.3.3", cmake_command: determine_preferred_command("cmake3", "cmake"))
 cmetrics.build
 
 libdir = RbConfig::CONFIG["libdir"]
