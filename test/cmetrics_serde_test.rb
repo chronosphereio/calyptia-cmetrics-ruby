@@ -230,6 +230,8 @@ EOC
         @serde.concat(obj)
 
         unpacked = MessagePack.unpack(@serde.to_msgpack)
+        metrics = unpacked["metrics"]
+
         assert_equal([
                        2,
                        {"ns"=>"test", "ss"=>"concat", "name"=>"counter", "desc"=>"Dest counter data"},
@@ -238,11 +240,11 @@ EOC
                        10.0
                      ],
                      [
-                       unpacked.size,
-                       unpacked.first["meta"]["opts"],
-                       unpacked.last["meta"]["opts"],
-                       unpacked.first["values"].last["value"],
-                       unpacked.last["values"].last["value"]
+                       metrics.size,
+                       metrics.first["meta"]["opts"],
+                       metrics.last["meta"]["opts"],
+                       metrics.first["values"].last["value"],
+                       metrics.last["values"].last["value"]
                      ])
       end
 
@@ -256,15 +258,16 @@ EOC
         obj.set(10)
         @serde.concat(obj)
         unpacked = MessagePack.unpack(@serde.to_msgpack)
+        metrics = unpacked["metrics"]
         assert_equal([
                        1,
                        {"ns"=>"test", "ss"=>"concat", "name"=>label, "desc"=>"Source #{label} data"},
                        10.0
                      ],
                      [
-                       unpacked.size,
-                       unpacked.first["meta"]["opts"],
-                       unpacked.first["values"].last["value"],
+                       metrics.size,
+                       metrics.first["meta"]["opts"],
+                       metrics.first["values"].last["value"],
                      ])
       end
 
@@ -276,10 +279,11 @@ EOC
           @serde.concat(@counter)
         end
         unpacked = MessagePack.unpack(@serde.to_msgpack)
-        opts = unpacked.collect do |obj|
+        metrics = unpacked["metrics"]
+        opts = metrics.collect do |obj|
           obj["meta"]["opts"]
         end
-        values = unpacked.collect do |obj|
+        values = metrics.collect do |obj|
           obj["values"].first["value"]
         end
         assert_equal([
@@ -299,7 +303,7 @@ EOC
                        [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
                      ],
                      [
-                       unpacked.size,
+                       metrics.size,
                        opts,
                        values
                      ])
