@@ -125,8 +125,12 @@ class BuildCMetrics
       libmpack_path = Dir.glob(File.join(ROOT, "ports/#{@recipe.host}/cmetrics/#{@version}/lib*/libmpack.a")).first
       FileUtils.cp(libmpack_path, File.join(ROOT, "ext", "cmetrics", "libmpack.a"))
       p Dir.glob(File.join(ROOT, "ports/#{@recipe.host}/cmetrics/#{@version}/lib*", "*"))
-      # libxxhash_path = Dir.glob(File.join(ROOT, "ports/#{@recipe.host}/cmetrics/#{@version}/lib*/libxxhash.a")).first
-      # FileUtils.cp(libxxhash_path, File.join(ROOT, "ext", "cmetrics", "libxxhash.a"))
+      libxxhash_path = Dir.glob(File.join(ROOT, "ports/#{@recipe.host}/cmetrics/#{@version}/lib*/libxxhash.a")).first
+      FileUtils.cp(libxxhash_path, File.join(ROOT, "ext", "cmetrics", "libxxhash.a"))
+      libcfl_path = Dir.glob(File.join(ROOT, "ports/#{@recipe.host}/cmetrics/#{@version}/lib*/libcfl.a")).first
+      FileUtils.cp(libcfl_path, File.join(ROOT, "ext", "cmetrics", "libcfl.a"))
+      libotel_proto_path = Dir.glob(File.join(ROOT, "ports/#{@recipe.host}/cmetrics/#{@version}/lib*/libfluent-otel-proto.a")).first
+      FileUtils.cp(libotel_proto_path, File.join(ROOT, "ext", "cmetrics", "libfluent-otel-proto.a"))
       include_path = File.join(ROOT, "ports/#{@recipe.host}/cmetrics/#{@version}/include/")
       FileUtils.cp_r(Dir.glob(File.join(include_path, "*")), File.join(ROOT, "ext", "cmetrics"))
       FileUtils.touch(@checkpoint)
