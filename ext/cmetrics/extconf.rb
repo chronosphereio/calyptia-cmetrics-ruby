@@ -35,7 +35,7 @@ class BuildCMetrics
 
   attr_reader :recipe
 
-  def initialize(version=nil, fluent_otel_version="0.9.0", cfl_version="0.1.10",**kwargs)
+  def initialize(version=nil, fluent_otel_version="0.9.0", cfl_version="0.1.11",**kwargs)
     @version = if version
                 version
               else
@@ -48,7 +48,7 @@ class BuildCMetrics
     @recipe.target = File.join(ROOT, "ports")
     @recipe.files << {
       url: "https://codeload.github.com/fluent/cmetrics/tar.gz/v#{version}",
-      sha256sum: "304180b927667f3582ec4093785ac6e34431e6760d2e9fef37cf6cddf2748e4b",
+      sha256sum: "e576e2cb6a7784a8094b0a050d918d48ca913740d4c1bfee3d8645a7bfe8b2bd",
     }
 
     @otel_proto_recipe = MiniPortileCMake.new("fluent-otel-proto", @fluent_otel_version, **kwargs)
