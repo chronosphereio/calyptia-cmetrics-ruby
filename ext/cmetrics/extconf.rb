@@ -35,7 +35,7 @@ class BuildCMetrics
 
   attr_reader :recipe
 
-  def initialize(version=nil, fluent_otel_version="0.9.0", cfl_version="0.1.11",**kwargs)
+  def initialize(version=nil, fluent_otel_version= "0.9.0", cfl_version= "0.2.0", **kwargs)
     @version = if version
                 version
               else
@@ -64,7 +64,7 @@ class BuildCMetrics
     @cfl_recipe.target = File.join(ROOT, "ports")
     @cfl_recipe.files << {
       url: "https://codeload.github.com/fluent/cfl/tar.gz/v#{cfl_version}",
-      sha256sum: "c8fec0f389239ee52e288082828d5719198dde06ba69d8e548d37d43e6ef0ec3",
+      sha256sum: "61caf08a2e428d660304ab86061e61a09577e9ecc140b1a0f387d8bc39b41b9d",
     }
   end
 
