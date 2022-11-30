@@ -213,7 +213,7 @@ static VALUE
 rb_metrics_serde_prometheus_remote_write(VALUE self)
 {
     struct CMetricsSerde* cmetricsSerde;
-    cmt_sds_t prom;
+    cfl_sds_t prom;
     VALUE str;
 
     TypedData_Get_Struct(
@@ -236,7 +236,7 @@ static VALUE
 rb_cmetrics_serde_to_prometheus(VALUE self)
 {
     struct CMetricsSerde* cmetricsSerde;
-    cmt_sds_t prom;
+    cfl_sds_t prom;
     VALUE str;
 
     TypedData_Get_Struct(
@@ -259,7 +259,7 @@ static VALUE
 rb_cmetrics_serde_to_influx(VALUE self)
 {
     struct CMetricsSerde* cmetricsSerde;
-    cmt_sds_t prom;
+    cfl_sds_t prom;
     VALUE str;
 
     TypedData_Get_Struct(
@@ -305,7 +305,7 @@ static VALUE
 rb_cmetrics_serde_to_text(VALUE self)
 {
     struct CMetricsSerde* cmetricsSerde;
-    cmt_sds_t buffer;
+    cfl_sds_t buffer;
     VALUE text;
 
     TypedData_Get_Struct(
@@ -322,7 +322,7 @@ rb_cmetrics_serde_to_text(VALUE self)
 
     text = rb_str_new2(buffer);
 
-    cmt_sds_destroy(buffer);
+    cfl_sds_destroy(buffer);
 
     return text;
 }
@@ -358,7 +358,7 @@ format_metric(struct cmt *cmt, struct cmt_map *map,
     int static_labels = 0;
     struct cmt_map_label *label_k;
     struct cmt_map_label *label_v;
-    struct mk_list *head;
+    struct cfl_list *head;
     struct cmt_opts *opts;
     struct cmt_label *slabel;
     VALUE rb_hash = rb_hash_new();
@@ -374,24 +374,24 @@ format_metric(struct cmt *cmt, struct cmt_map *map,
     /* Static labels (tags) */
     static_labels = cmt_labels_count(cmt->static_labels);
     if (static_labels > 0) {
-        mk_list_foreach(head, &cmt->static_labels->list) {
-            slabel = mk_list_entry(head, struct cmt_label, _head);
+        cfl_list_foreach(head, &cmt->static_labels->list) {
+            slabel = cfl_list_entry(head, struct cmt_label, _head);
             rb_hash_aset(shash, rb_str_new2(slabel->key), rb_str_new2(slabel->val));
         }
         rb_hash_aset(rb_hash, rb_str_new2("static_labels"), shash);
     }
 
     /* Labels / Tags */
-    n = mk_list_size(&metric->labels);
+    n = cfl_list_size(&metric->labels);
     if (n > 0) {
-        label_k = mk_list_entry_first(&map->label_keys, struct cmt_map_label, _head);
+        label_k = cfl_list_entry_first(&map->label_keys, struct cmt_map_label, _head);
 
-        mk_list_foreach(head, &metric->labels) {
-            label_v = mk_list_entry(head, struct cmt_map_label, _head);
+        cfl_list_foreach(head, &metric->labels) {
+            label_v = cfl_list_entry(head, struct cmt_map_label, _head);
 
             rb_hash_aset(lhash, rb_str_new2(label_k->name), rb_str_new2(label_v->name));
 
-            label_k = mk_list_entry_next(&label_k->_head, struct cmt_map_label,
+            label_k = cfl_list_entry_next(&label_k->_head, struct cmt_map_label,
                                          _head, &map->label_keys);
         }
         rb_hash_aset(rb_hash, rb_str_new2("labels"), lhash);
@@ -408,7 +408,7 @@ format_metrics(struct cmt *cmt,
 {
     VALUE rbMetrics = rb_ary_new();
     VALUE rbMetric;
-    struct mk_list *head;
+    struct cfl_list *head;
     struct cmt_metric *metric;
 
     /* Simple metric, no labels */
@@ -417,8 +417,8 @@ format_metrics(struct cmt *cmt,
         rb_ary_push(rbMetrics, rbMetric);
     }
 
-    mk_list_foreach(head, &map->metrics) {
-        metric = mk_list_entry(head, struct cmt_metric, _head);
+    cfl_list_foreach(head, &map->metrics) {
+        metric = cfl_list_entry(head, struct cmt_metric, _head);
         rbMetric = format_metric(cmt, map, metric);
         rb_ary_push(rbMetrics, rbMetric);
     }
@@ -432,7 +432,7 @@ rb_cmetrics_serde_get_metrics(VALUE self)
     VALUE rbMetrics = rb_ary_new();
     VALUE rbMetricsInner = rb_ary_new();
     struct CMetricsSerde* cmetricsSerde;
-    struct mk_list *head;
+    struct cfl_list *head;
     struct cmt_gauge *gauge;
     struct cmt_counter *counter;
     struct cmt_untyped *untyped;
@@ -449,22 +449,22 @@ rb_cmetrics_serde_get_metrics(VALUE self)
     }
 
     /* Counters */
-    mk_list_foreach(head, &cmt->counters) {
-        counter = mk_list_entry(head, struct cmt_counter, _head);
+    cfl_list_foreach(head, &cmt->counters) {
+        counter = cfl_list_entry(head, struct cmt_counter, _head);
         rbMetricsInner = format_metrics(cmt, counter->map, add_timestamp);
         rb_ary_push(rbMetrics, rbMetricsInner);
     }
 
     /* Gauges */
-    mk_list_foreach(head, &cmt->gauges) {
-        gauge = mk_list_entry(head, struct cmt_gauge, _head);
+    cfl_list_foreach(head, &cmt->gauges) {
+        gauge = cfl_list_entry(head, struct cmt_gauge, _head);
         rbMetricsInner = format_metrics(cmt, gauge->map, add_timestamp);
         rb_ary_push(rbMetrics, rbMetricsInner);
     }
 
     /* Untyped */
-    mk_list_foreach(head, &cmt->untypeds) {
-        untyped = mk_list_entry(head, struct cmt_untyped, _head);
+    cfl_list_foreach(head, &cmt->untypeds) {
+        untyped = cfl_list_entry(head, struct cmt_untyped, _head);
         rbMetricsInner = format_metrics(cmt, untyped->map, add_timestamp);
         rb_ary_push(rbMetrics, rbMetricsInner);
     }

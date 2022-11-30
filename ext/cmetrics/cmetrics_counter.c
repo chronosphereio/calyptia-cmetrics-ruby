@@ -212,7 +212,7 @@ rb_cmetrics_counter_increment(int argc, VALUE* argv, VALUE self)
 
     rb_scan_args(argc, argv, "01", &rb_labels);
 
-    ts = cmt_time_now();
+    ts = cfl_time_now();
     if (!NIL_P(rb_labels)) {
         switch(TYPE(rb_labels)) {
         case T_STRING:
@@ -381,7 +381,7 @@ rb_cmetrics_counter_add(int argc, VALUE* argv, VALUE self)
     }
 
 
-    ts = cmt_time_now();
+    ts = cfl_time_now();
     if (!NIL_P(rb_labels)) {
         switch(TYPE(rb_labels)) {
         case T_STRING:
@@ -472,7 +472,7 @@ rb_cmetrics_counter_set(int argc, VALUE* argv, VALUE self)
         rb_raise(rb_eArgError, "CMetrics::Counter#set can handle numerics values only.");
     }
 
-    ts = cmt_time_now();
+    ts = cfl_time_now();
     if (!NIL_P(rb_labels)) {
         switch(TYPE(rb_labels)) {
         case T_STRING:
@@ -579,7 +579,7 @@ static VALUE
 rb_cmetrics_counter_to_prometheus(VALUE self)
 {
     struct CMetricsCounter* cmetricsCounter;
-    cmt_sds_t prom;
+    cfl_sds_t prom;
     VALUE str;
 
     TypedData_Get_Struct(
@@ -598,7 +598,7 @@ static VALUE
 rb_cmetrics_counter_to_influx(VALUE self)
 {
     struct CMetricsCounter* cmetricsCounter;
-    cmt_sds_t prom;
+    cfl_sds_t prom;
     VALUE str;
 
     TypedData_Get_Struct(
@@ -637,7 +637,7 @@ static VALUE
 rb_cmetrics_counter_to_text(VALUE self)
 {
     struct CMetricsCounter* cmetricsCounter;
-    cmt_sds_t buffer;
+    cfl_sds_t buffer;
     VALUE text;
 
     TypedData_Get_Struct(
@@ -650,7 +650,7 @@ rb_cmetrics_counter_to_text(VALUE self)
 
     text = rb_str_new2(buffer);
 
-    cmt_sds_destroy(buffer);
+    cfl_sds_destroy(buffer);
 
     return text;
 }
