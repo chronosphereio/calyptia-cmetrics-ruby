@@ -9,6 +9,7 @@ distribution=$(cat /etc/system-release-cpe | awk '{print substr($0, index($1, "o
 version=$(cat /etc/system-release-cpe | awk '{print substr($0, index($1, "o"))}' | cut -d: -f4)
 USE_SCL=0
 USE_AMZN_EXT=0
+USE_DNF_MODULE=0
 
 case ${distribution} in
   amazon)
@@ -35,7 +36,7 @@ case ${distribution} in
     case ${version} in
       8)
         DNF="dnf --enablerepo=powertools"
-        USE_SCL=1
+        USE_DNF_MODULE=1
         ;;
       9)
         DNF="dnf --enablerepo=crb"
@@ -62,6 +63,13 @@ if [ $USE_SCL -eq 1 ]; then
     rh-ruby26-rubygem-rake \
     rpm-build \
     cmake3
+elif [ $USE_DNF_MODULE -eq 1 ]; then
+    dnf update -y && \
+    dnf module install -y ruby:3.0 && \
+    dnf install -y ruby-devel \
+        rubygems \
+        rpm-build \
+        cmake
 elif [ $USE_AMZN_EXT -eq 1 ]; then
     yum update -y && \
     yum install -y yum-utils && \
