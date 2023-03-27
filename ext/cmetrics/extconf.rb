@@ -48,7 +48,7 @@ class BuildCMetrics
     @recipe.target = File.join(ROOT, "ports")
     @recipe.files << {
       url: "https://codeload.github.com/fluent/cmetrics/tar.gz/v#{version}",
-      sha256sum: "e576e2cb6a7784a8094b0a050d918d48ca913740d4c1bfee3d8645a7bfe8b2bd",
+      sha256sum: "d099dd037dea04585ccf2f8ebe817ff5fcaf8b6ef6394c220f8100c78fc4ee86",
     }
 
     @otel_proto_recipe = MiniPortileCMake.new("fluent-otel-proto", @fluent_otel_version, **kwargs)
@@ -141,7 +141,7 @@ class BuildCMetrics
   end
 end
 
-cmetrics = BuildCMetrics.new("0.5.8", cmake_command: determine_preferred_command("cmake3", "cmake"))
+cmetrics = BuildCMetrics.new("0.5.9", cmake_command: determine_preferred_command("cmake3", "cmake"))
 cmetrics.build
 
 libdir = RbConfig::CONFIG["libdir"]

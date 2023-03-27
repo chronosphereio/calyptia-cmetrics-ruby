@@ -11,7 +11,8 @@ jobs:
         label:
           - CentOS 7 x86_64
           - RockyLinux OS 8 x86_64
-          - Fedora 34 x86_64
+          - RockyLinux OS 9 x86_64
+          - Fedora 37 x86_64
           - AmazonLinux 2 x86_64
         include:
           - label: CentOS 7 x86_64
@@ -20,7 +21,10 @@ jobs:
           - label: RockyLinux OS 8 x86_64
             test-docker-image: rockylinux:8
             test-script: ci/yum-test.sh
-          - label: Fedora 34 x86_64
+          - label: RockyLinux OS 9 x86_64
+            test-docker-image: rockylinux:9
+            test-script: ci/yum-test.sh
+          - label: Fedora 37 x86_64
             test-docker-image: fedora:34
             test-script: ci/yum-test.sh
           - label: AmazonLinux 2 x86_64
@@ -28,7 +32,7 @@ jobs:
             test-script: ci/yum-test.sh
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
       - name: rake compile & rake test
         run: |
           docker run \
