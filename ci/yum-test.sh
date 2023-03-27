@@ -25,8 +25,9 @@ case ${distribution} in
         DNF=yum
         USE_SCL=1
         ;;
-      *)
+      8)
         DNF="dnf --enablerepo=powertools"
+        USE_SCL=1
         ;;
     esac
     ;;
@@ -34,15 +35,16 @@ case ${distribution} in
     case ${version} in
       8)
         DNF="dnf --enablerepo=powertools"
+        USE_SCL=1
         ;;
-      *)
-        DNF="dnf --enablerepo=powertools"
+      9)
+        DNF="dnf --enablerepo=crb"
         ;;
     esac
     ;;
   fedoraproject)
     case ${version} in
-      33|34)
+      33|34|35|36|37)
         DNF=yum
         ;;
     esac
