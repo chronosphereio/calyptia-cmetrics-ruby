@@ -9,15 +9,11 @@ jobs:
       fail-fast: false
       matrix:
         label:
-          - CentOS 7 x86_64
           - RockyLinux OS 8 x86_64
           - RockyLinux OS 9 x86_64
           - Fedora 37 x86_64
           - AmazonLinux 2 x86_64
         include:
-          - label: CentOS 7 x86_64
-            test-docker-image: centos:7
-            test-script: ci/yum-test.sh
           - label: RockyLinux OS 8 x86_64
             test-docker-image: rockylinux:8
             test-script: ci/yum-test.sh
