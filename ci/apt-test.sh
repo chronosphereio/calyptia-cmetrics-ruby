@@ -35,6 +35,6 @@ apt install -V -y lsb-release
 
 apt install -V -y ruby-dev git build-essential pkg-config cmake
 cd /cmetrics-ruby && \
-    gem install bundler --no-document && \
+    gem install bundler -v 2.4.22 --no-document && \
     bundle install && \
     bundle exec rake

@@ -76,10 +76,10 @@ fi
 if [ $USE_SCL -eq 1 ]; then
     # For unbound variable error
     export MANPATH=
-    cd /cmetrics-ruby && source /opt/rh/rh-ruby26/enable && gem install bundler --no-document && bundle install && bundle exec rake
+    cd /cmetrics-ruby && source /opt/rh/rh-ruby26/enable && gem install bundler -v 2.4.22 --no-document && bundle install && bundle exec rake
 else
     if [ $USE_AMZN_EXT -eq 1 ]; then
         echo 'gem "io-console"' > /cmetrics-ruby/Gemfile.local
     fi
-    cd /cmetrics-ruby && gem install bundler --no-document && bundle install && bundle exec rake
+    cd /cmetrics-ruby && gem install bundler -v 2.4.22 --no-document && bundle install && bundle exec rake
 fi
