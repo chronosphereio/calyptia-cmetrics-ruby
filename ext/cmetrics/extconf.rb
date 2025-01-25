@@ -44,6 +44,13 @@ class BuildCMetrics
     @fluent_otel_version = fluent_otel_version
     @cfl_version = cfl_version
     @recipe = MiniPortileCMake.new("cmetrics", @version, **kwargs)
+
+    # To avoid "incompatible pointer type" error
+    def @recipe.cmake_compile_flags
+      flags = super
+      flags << "-DCMAKE_C_FLAGS='-Wno-incompatible-pointer-types'"
+    end
+
     @checkpoint = ".#{@recipe.name}-#{@recipe.version}.installed"
     @recipe.target = File.join(ROOT, "ports")
     @recipe.files << {
