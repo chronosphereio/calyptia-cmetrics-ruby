@@ -13,6 +13,16 @@ jobs:
         ruby-version: '3.0'
     - name: Run the default task
       run: |
+        # Windows's cmake can't handle long path over 260 characters.
+        # It could not be avoided by CMAKE_OBJECT_PATH_MAX configuration.
+        # To avoid this, it copy the repository to short directry name.
+        Copy-Item -Path $PWD.Path -Destination /cm -Recurse
+        cd /cm
+
         gem install bundler -v 2.2.26
         ridk exec bundle install
         ridk exec bundle exec rake
+
+        # Clean up
+        cd /
+        Remove-Item -Path /cm -Recurse -Force
