@@ -5,14 +5,16 @@ on: [push,pull_request]
 jobs:
   build:
     runs-on: macos-latest
+    strategy:
+      matrix:
+        ruby_version: [ '3.2', '3.3', '3.4' ]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.0'
+        ruby-version: ${{ matrix.ruby_version }}
     - name: Run the default task
       run: |
-        gem install bundler -v 2.2.26
         bundle install
         bundle exec rake
