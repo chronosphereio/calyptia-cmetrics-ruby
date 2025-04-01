@@ -20,6 +20,18 @@ case ${distribution} in
         ;;
     esac
     ;;
+  centos)
+    case ${version} in
+      7)
+        DNF=yum
+        USE_SCL=1
+        ;;
+      8)
+        DNF="dnf --enablerepo=powertools"
+        USE_SCL=1
+        ;;
+    esac
+    ;;
   rocky)
     case ${version} in
       8)
