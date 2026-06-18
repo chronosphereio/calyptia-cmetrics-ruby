@@ -16,7 +16,7 @@ jobs:
           - AmazonLinux 2 x86_64
         include:
           - label: CentOS 7 x86_64
-            test-docker-image: centos:7
+            test-docker-image: ghcr.io/fluent/fluent-package-centos-7
             test-script: ci/yum-test.sh
           - label: RockyLinux OS 8 x86_64
             test-docker-image: rockylinux:8
