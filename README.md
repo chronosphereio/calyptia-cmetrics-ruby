@@ -1,8 +1,8 @@
 # CMetrics Ruby
 
-[![CI on Ubuntu](https://github.com/calyptia/cmetrics-ruby/actions/workflows/linux.yml/badge.svg?branch=main)](https://github.com/calyptia/cmetrics-ruby/actions/workflows/linux.yml)
-[![CI on Windows](https://github.com/calyptia/cmetrics-ruby/actions/workflows/windows.yml/badge.svg?branch=main)](https://github.com/calyptia/cmetrics-ruby/actions/workflows/windows.yml)
-[![CI on macOS](https://github.com/calyptia/cmetrics-ruby/actions/workflows/macos.yml/badge.svg?branch=main)](https://github.com/calyptia/cmetrics-ruby/actions/workflows/macos.yml)
+[![CI on Ubuntu](https://github.com/chronosphereio/calyptia-cmetrics-ruby/actions/workflows/linux.yml/badge.svg)](https://github.com/calyptia/cmetrics-ruby/actions/workflows/linux.yml/badge.svg)
+[![CI on Windows](https://github.com/chronosphereio/calyptia-cmetrics-ruby/actions/workflows/windows.yml/badge.svg)](https://github.com/chronosphereio/calyptia-cmetrics-ruby/actions/workflows/windows.yml)
+[![CI on macOS](https://github.com/chronosphereio/calyptia-cmetrics-ruby/actions/workflows/macos.yml/badge.svg)](https://github.com/chronosphereio/calyptia-cmetrics-ruby/actions/workflows/macos.yml)
 
 A Ruby binding for [cmetrics](https://github.com/calyptia/cmetrics).
 
